@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ppmdata.blob.core.windows.net',
+        port: '',
+        pathname: '/ppm/images/**',
+        search: '',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
