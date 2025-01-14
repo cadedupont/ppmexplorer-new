@@ -1,7 +1,7 @@
 export type PPMItem = {
   id: string;
   imageURL: string;
-  caption: string;
+  caption_it: string;
   caption_en: string;
   volume: number;
   page: number;
