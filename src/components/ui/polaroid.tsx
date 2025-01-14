@@ -14,6 +14,7 @@ import type { PPMItem } from "@/lib/types";
 
 const Polaroid = ({ item }: { item: PPMItem }) => {
   const { imageURL, caption_en, volume, page, location } = item;
+  const { regio, insula, property } = location;
   return (
     <Card>
       <CardHeader>
@@ -21,8 +22,7 @@ const Polaroid = ({ item }: { item: PPMItem }) => {
           Volume {volume}, Page {page}
         </CardTitle>
         <CardDescription>
-          Regio {location.regio}, Insula {location.insula}, Property{" "}
-          {location.property || "N/A"}
+          Regio {regio}, Insula {insula}, Property {property || "N/A"}
         </CardDescription>
       </CardHeader>
       <CardContent>

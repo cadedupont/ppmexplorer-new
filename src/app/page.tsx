@@ -1,5 +1,6 @@
 import type { PPMItem } from "@/lib/types";
 import Polaroid from "@/components/ui/polaroid";
+import { Button } from "@/components/ui/button";
 
 const test: PPMItem = {
   "id": "Volume_01_Page_0032_image_1",
