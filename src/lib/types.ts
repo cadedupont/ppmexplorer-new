@@ -1,3 +1,12 @@
+import { Feature, Polygon } from 'geojson';
+
+type CustomGeoJsonProperties = {
+  title: string;
+  scope: 'room' | 'property' | 'insula' | 'regio';
+  center: [number, number];
+};
+export type CustomGeoJsonFeature = Feature<Polygon, CustomGeoJsonProperties>;
+
 export type PPMItem = {
   id: string;
   imageURL: string;
@@ -9,7 +18,8 @@ export type PPMItem = {
     regio: number;
     insula: number;
     property: string | undefined;
-    coordinates: [number, number];
+    room: string | undefined;
+    geojson: CustomGeoJsonFeature;
   }
   captionVector: number[];
   imageVector: number[];

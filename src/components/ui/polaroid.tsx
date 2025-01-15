@@ -15,9 +15,10 @@ import type { PPMItem } from "@/lib/types";
 export default function Polaroid({ item }: { item: PPMItem }) {
   const { imageURL, caption_en, volume, page, location } = item;
   const { regio, insula, property } = location;
+
   return (
     <Link href={`/items/${item.id}`}>
-      <Card className="w-[300px] h-[600px] p-2">
+      <Card className="w-[300px] h-[600px] flex flex-col hover:z-5 hover:scale-105 transition-transform">
         <CardHeader>
           <CardTitle>
             Volume {volume}, Page {page}
@@ -28,18 +29,16 @@ export default function Polaroid({ item }: { item: PPMItem }) {
         </CardHeader>
         <CardContent className="flex items-center justify-center">
           <Image
-            className="w-[250px] h-[250px] flex items-center justify-center object-contain pointer-events-none"
+            className="w-[275px] h-[275px] object-contain pointer-events-none"
             src={imageURL}
             alt={caption_en}
-            width={250}
-            height={250}
+            width={300}
+            height={300}
             unselectable="on"
             onContextMenu={(e) => e.preventDefault()}
           />
         </CardContent>
-        <CardFooter className="h-[250px] overflow-y-auto">
-          {caption_en}
-        </CardFooter>
+        <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>
       </Card>
     </Link>
   );
