@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   Card,
   CardHeader,
@@ -8,11 +10,11 @@ import {
   CardDescription,
   CardContent,
 } from "./card";
-import Image from "next/image";
-import Link from "next/link";
+import PPMImage from "./ppm-image";
+
 import type { PPMItem } from "@/lib/types";
 
-export default function Polaroid({ item }: { item: PPMItem }) {
+const PPMPolaroid: React.FC<{ item: PPMItem }> = ({ item }) => {
   const { imageURL, caption_en, volume, page, location } = item;
   const { regio, insula, property } = location;
 
@@ -28,18 +30,18 @@ export default function Polaroid({ item }: { item: PPMItem }) {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
-          <Image
-            className="w-[275px] h-[275px] object-contain pointer-events-none"
+          <PPMImage
             src={imageURL}
             alt={caption_en}
             width={300}
             height={300}
-            unselectable="on"
-            onContextMenu={(e) => e.preventDefault()}
+            className="w-[275px] h-[275px] object-contain"
           />
         </CardContent>
         <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>
       </Card>
     </Link>
   );
-}
+};
+
+export default PPMPolaroid;
