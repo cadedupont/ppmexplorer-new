@@ -63,7 +63,7 @@ export default {
   		},
   		fontFamily: {
   			sans: [
-  				'var(--font-merriweather-sans)'
+  				'var(--font-figtree)'
   			],
   			serif: [
   				'var(--font-copse)'

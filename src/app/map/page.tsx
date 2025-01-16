@@ -1,7 +1,5 @@
-export default function Page() {
-  return (
-    <main>
-      Map
-    </main>
-  );
-}
+const Page = async () => {
+  return <main>Map</main>;
+};
+
+export default Page;

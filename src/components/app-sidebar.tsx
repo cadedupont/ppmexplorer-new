@@ -1,8 +1,10 @@
 import { Home, Search, Map, Info } from "lucide-react";
 import Link from "next/link";
+
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -10,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import DarkModeToggle from "@/components/ui/dark-mode-toggle";
 
 const items = [
   {
@@ -56,6 +59,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <DarkModeToggle />
+      </SidebarFooter>
     </Sidebar>
   );
 }

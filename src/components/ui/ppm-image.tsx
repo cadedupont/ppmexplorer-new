@@ -1,20 +1,18 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-interface PPMImageProps {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  className?: string;
-}
-
-const PPMImage: React.FC<PPMImageProps> = ({
+const PPMImage = ({
   src,
   alt,
   width,
   height,
   className,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
 }) => {
   return (
     <Image
