@@ -1,10 +1,14 @@
 import { Feature, Polygon } from "geojson";
 import { roomTypes } from "./utils";
 
+export type LocationScope = "room" | "property" | "insula" | "regio";
 type CustomGeoJsonProperties = {
   title: string;
-  scope: "room" | "property" | "insula" | "regio";
-  center: [number, number];
+  scope: LocationScope;
+  center: {
+    lat: number;
+    lng: number;
+  };
 };
 export type CustomGeoJsonFeature = Feature<Polygon, CustomGeoJsonProperties>;
 
@@ -14,7 +18,7 @@ export type PPMItem = {
   imageIndex: 1 | 2 | 3 | 4;
   caption_it: string;
   caption_en: string;
-  roomType: typeof roomTypes[number];
+  roomType: (typeof roomTypes)[number];
   volume: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   page: number;
   location: {
