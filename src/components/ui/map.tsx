@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 
 const MapContainer = dynamic(
@@ -18,7 +19,7 @@ const TileLayer = dynamic(
 
 import "leaflet/dist/leaflet.css";
 
-const PompeiiMap = ({
+const Map = ({
   children,
   center,
   zoom,
@@ -34,17 +35,28 @@ const PompeiiMap = ({
   width: string;
   height: string;
 }) => {
+  const { theme } = useTheme();
+
   return (
     <MapContainer
       center={center}
       minZoom={13}
-      maxZoom={20}
+      maxZoom={19}
       zoom={zoom}
       style={{ height: height, width: width }}
     >
       <TileLayer
-        url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png"
+        url={
+          theme === "dark"
+            ? "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png"
+            : "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+        }
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        maxNativeZoom={19}
+        maxZoom={20}
+      />
+      <TileLayer
+        url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png"
         maxNativeZoom={19}
         maxZoom={20}
       />
@@ -53,4 +65,4 @@ const PompeiiMap = ({
   );
 };
 
-export default PompeiiMap;
+export default Map;

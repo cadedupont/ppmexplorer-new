@@ -1,10 +1,10 @@
-import PompeiiMap from "@/components/ui/pompeii-map";
+import Map from "@/components/ui/map";
 
 const Page = async () => {
   return (
-    <PompeiiMap
+    <Map
       center={{ lat: 40.75103, lng: 14.4884 }}
-      zoom={16}
+      zoom={17}
       width={"100%"}
       height={"100vh"}
     />

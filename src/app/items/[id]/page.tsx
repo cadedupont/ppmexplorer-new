@@ -1,5 +1,4 @@
 import PPMItemDashboard from "./ppm-item-dashboard";
-import PPMItemLocation from "./ppm-item-location";
 
 const getItem = async (id: string) => {
   try {
@@ -31,7 +30,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         // this page.tsx file is a server component, so data must be passed down to client component as props
         <div>
           <PPMItemDashboard item={item.data} />
-          <PPMItemLocation geojson={item.data.location.geojson} />
         </div>
       ) : (
         <div>{item.error}</div>

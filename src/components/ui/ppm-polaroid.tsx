@@ -17,7 +17,7 @@ import {
 import type { PPMItem } from "@/lib/types";
 
 const PPMPolaroid = ({ item }: { item: PPMItem }) => {
-  const { imageURL, imageIndex, caption_en, volume, page, location } = item;
+  const { id, imageURL, imageIndex, caption_it, volume, page, location } = item;
   const { regio, insula, property, room } = location;
 
   return (
@@ -39,7 +39,7 @@ const PPMPolaroid = ({ item }: { item: PPMItem }) => {
       <CardContent className="flex items-center justify-center">
         <Image
           src={imageURL}
-          alt={caption_en}
+          alt={id}
           width={300}
           height={300}
           className="w-[275px] h-[275px] object-contain"
@@ -47,7 +47,7 @@ const PPMPolaroid = ({ item }: { item: PPMItem }) => {
           onDragStart={(e) => e.preventDefault()}
         />
       </CardContent>
-      <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>
+      <CardFooter className="overflow-y-auto">{caption_it}</CardFooter>
     </Card>
   );
 };

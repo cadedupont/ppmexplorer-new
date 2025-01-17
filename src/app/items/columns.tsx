@@ -26,7 +26,7 @@ const columns: ColumnDef<PPMItem>[] = [
         <Lightbox
           src={row.original.imageURL}
           alt={row.original.id}
-          caption={row.original.caption_en}
+          caption={row.original.caption_it}
         />
       </div>
     ),
