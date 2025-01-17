@@ -1,4 +1,3 @@
-import PPMImage from "@/components/ui/ppm-image";
 import {
   Card,
   CardHeader,

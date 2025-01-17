@@ -2,6 +2,7 @@
 
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { Button } from "./button";
 import {
@@ -12,7 +13,6 @@ import {
   CardDescription,
   CardContent,
 } from "./card";
-import PPMImage from "./ppm-image";
 
 import type { PPMItem } from "@/lib/types";
 
@@ -37,12 +37,14 @@ const PPMPolaroid = ({ item }: { item: PPMItem }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex items-center justify-center">
-        <PPMImage
+        <Image
           src={imageURL}
           alt={caption_en}
           width={300}
           height={300}
           className="w-[275px] h-[275px] object-contain"
+          onContextMenu={(e) => e.preventDefault()}
+          onDragStart={(e) => e.preventDefault()}
         />
       </CardContent>
       <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>

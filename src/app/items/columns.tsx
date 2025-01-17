@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-import PPMImage from "@/components/ui/ppm-image";
+import Lightbox from "@/components/ui/lightbox";
 import { Button } from "@/components/ui/button";
 
 import type { PPMItem } from "@/lib/types";
@@ -23,12 +23,10 @@ const columns: ColumnDef<PPMItem>[] = [
     header: "Image",
     cell: ({ row }) => (
       <div className="h-[100px] w-[100px] overflow-hidden flex items-center">
-        <PPMImage
+        <Lightbox
           src={row.original.imageURL}
           alt={row.original.id}
-          width={100}
-          height={100}
-          className="object-cover"
+          caption={row.original.caption_en}
         />
       </div>
     ),
