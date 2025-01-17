@@ -60,7 +60,9 @@ export default function DataTable<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="text-center">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <div className="flex justify-center items-center">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>

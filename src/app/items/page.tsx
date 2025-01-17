@@ -35,7 +35,7 @@ const Page = async () => {
         </TabsContent>
         <TabsContent value="grid">
           <div className="flex items-center justify-center">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {items.map((item: PPMItem) => (
                 <PPMPolaroid key={item.id} item={item} />
               ))}

@@ -21,12 +21,12 @@ const PPMPolaroid = ({ item }: { item: PPMItem }) => {
   const { regio, insula, property, room } = location;
 
   return (
-    <Card className="w-[300px] h-[600px] flex flex-col">
+    <Card className="h-[600px] flex flex-col">
       <CardHeader className="relative">
         <CardTitle className="flex flex-row items-center justify-between space-y-0">
             Volume {volume}, Page {page}, Image {imageIndex}
           <Link href={`/items/${item.id}`}>
-            <Button variant="secondary" size="icon">
+            <Button variant="link" size="icon">
               <ExternalLink />
             </Button>
           </Link>

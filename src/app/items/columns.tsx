@@ -61,7 +61,7 @@ const columns: ColumnDef<PPMItem>[] = [
     accessorKey: "open",
     header: "",
     cell: ({ row }) => (
-      <Link href={`/items/${row.original.id}`} target="_blank">
+      <Link href={`/items/${row.original.id}`}>
         <Button variant="link" size="icon">
           <ExternalLink />
         </Button>

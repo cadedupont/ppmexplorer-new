@@ -38,7 +38,12 @@ const PPMItemLocation = ({ geojson }: { geojson: CustomGeoJsonFeature }) => {
   );
 
   return (
-    <PompeiiMap center={geojson.properties.center} zoom={20}>
+    <PompeiiMap
+      center={geojson.properties.center}
+      zoom={20}
+      width={"100%"}
+      height={"50vh"}
+    >
       <GeoJSON key={geojson.id} data={geojson} style={style} />
     </PompeiiMap>
   );

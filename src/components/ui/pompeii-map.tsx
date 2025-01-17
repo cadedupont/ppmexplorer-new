@@ -1,15 +1,29 @@
 "use client";
 
 import { ReactNode } from "react";
+import dynamic from "next/dynamic";
 
-import { MapContainer, TileLayer } from "react-leaflet";
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((module) => module.MapContainer),
+  {
+    ssr: false,
+  }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((module) => module.TileLayer),
+  {
+    ssr: false,
+  }
+);
 
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 
 const PompeiiMap = ({
   children,
   center,
   zoom,
+  width,
+  height,
 }: {
   children?: ReactNode;
   center: {
@@ -17,6 +31,8 @@ const PompeiiMap = ({
     lng: number;
   };
   zoom: number;
+  width: string;
+  height: string;
 }) => {
   return (
     <MapContainer
@@ -24,7 +40,7 @@ const PompeiiMap = ({
       minZoom={13}
       maxZoom={20}
       zoom={zoom}
-      style={{ height: "800px", width: "1000px" }}
+      style={{ height: height, width: width }}
     >
       <TileLayer
         url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png"
