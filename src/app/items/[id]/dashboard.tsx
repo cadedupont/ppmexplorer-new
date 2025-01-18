@@ -4,15 +4,15 @@ import Image from "next/image";
 
 import { Captions, House, BookOpenText, MapPin } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import PPMItemLocation from "./ppm-item-location";
+import ItemLocation from "./item-location";
 
 import type { PPMItem } from "@/lib/types";
 
-const PPMItemDashboard = ({ item }: { item: PPMItem }) => {
+const Dashboard = ({ item }: { item: PPMItem }) => {
   const renderCard = (
     title: string,
     content: string | number,
-    icon: React.ReactNode,
+    icon?: React.ReactNode,
     className?: string
   ) => (
     <Card className={className}>
@@ -42,11 +42,11 @@ const PPMItemDashboard = ({ item }: { item: PPMItem }) => {
           />
         </CardContent>
         <CardContent className="flex items-center justify-center">
-          <PPMItemLocation
+          <ItemLocation
             geojson={item.location.geojson}
             regioNum={item.location.regio}
           />
-        </CardContent>
+        </CardContent>        
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {renderCard("Caption (English)", item.caption_en, <Captions />)}
@@ -65,4 +65,4 @@ const PPMItemDashboard = ({ item }: { item: PPMItem }) => {
   );
 };
 
-export default PPMItemDashboard;
+export default Dashboard;

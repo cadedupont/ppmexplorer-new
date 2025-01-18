@@ -1,4 +1,4 @@
-import PPMItemDashboard from "./ppm-item-dashboard";
+import Dashboard from "./dashboard";
 
 const getItem = async (id: string) => {
   try {
@@ -29,7 +29,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
       {item.success ? (
         // this page.tsx file is a server component, so data must be passed down to client component as props
         <div>
-          <PPMItemDashboard item={item.data} />
+          <Dashboard item={item.data} />
         </div>
       ) : (
         <div>{item.error}</div>

@@ -16,7 +16,7 @@ import {
 
 import type { PPMItem } from "@/lib/types";
 
-const PPMPolaroid = ({ item }: { item: PPMItem }) => {
+const Polaroid = ({ item }: { item: PPMItem }) => {
   const { id, imageURL, imageIndex, caption_it, volume, page, location } = item;
   const { regio, insula, property, room } = location;
 
@@ -52,4 +52,4 @@ const PPMPolaroid = ({ item }: { item: PPMItem }) => {
   );
 };
 
-export default PPMPolaroid;
+export default Polaroid;

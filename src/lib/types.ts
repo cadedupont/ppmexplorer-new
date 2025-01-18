@@ -15,12 +15,12 @@ export type CustomGeoJsonFeature = Feature<Polygon, CustomGeoJsonProperties>;
 export type PPMItem = {
   id: string; // e.g. "Volume_01_Page_002_image_1"
   imageURL: string; // e.g. https://ppmdata.blob.core.windows.net/ppm/images/{id}.jpg
-  imageIndex: 1 | 2 | 3 | 4;
   caption_it: string;
   caption_en: string;
   roomType: (typeof roomTypes)[number];
   volume: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   page: number;
+  imageIndex: 1 | 2 | 3 | 4;
   location: {
     regio: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
     insula: number;

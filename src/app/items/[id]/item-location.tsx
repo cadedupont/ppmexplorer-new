@@ -1,10 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 
 import { regios } from "@/lib/utils";
-
 import { LocationScope, CustomGeoJsonFeature } from "@/lib/types";
 
 import "leaflet/dist/leaflet.css";
@@ -30,7 +29,7 @@ const getColorByScope = (scope: LocationScope) => {
   return colorMap[scope];
 };
 
-const PPMItemLocation = ({
+const ItemLocation = ({
   geojson,
   regioNum,
 }: {
@@ -68,4 +67,4 @@ const PPMItemLocation = ({
   );
 };
 
-export default PPMItemLocation;
+export default ItemLocation;

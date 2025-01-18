@@ -30,13 +30,10 @@ const Lightbox = ({
       />
       {isExpanded && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
           onClick={toggleLightbox}
         >
-          <div
-            className="relative flex flex-col items-center max-w-4xl max-h-screen text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative flex flex-col items-center max-w-2xl max-h-screen text-center">
             <Image
               src={src}
               alt={alt}
@@ -44,11 +41,17 @@ const Lightbox = ({
               height={0}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
-              className="max-w-full max-h-[80vh] mb-4"
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-full max-h-[80vh] mb-4 object-contain p-4 sm:px-8"
               sizes="100vw"
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "auto" }}
             />
-            <div className="text-white text-lg">{caption}</div>
+            <div
+              className="text-white text-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {caption}
+            </div>
           </div>
         </div>
       )}
