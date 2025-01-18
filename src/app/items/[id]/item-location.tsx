@@ -3,11 +3,6 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
-import { regios } from "@/lib/utils";
-import { LocationScope, CustomGeoJsonFeature } from "@/lib/types";
-
-import "leaflet/dist/leaflet.css";
-
 const Map = dynamic(() => import("@/components/ui/map"), {
   ssr: false,
 });
@@ -19,15 +14,8 @@ const GeoJSON = dynamic(
   }
 );
 
-const getColorByScope = (scope: LocationScope) => {
-  const colorMap: Record<LocationScope, string> = {
-    room: "red",
-    property: "yellow",
-    insula: "green",
-    regio: "blue",
-  };
-  return colorMap[scope];
-};
+import { regios, getColorByScope } from "@/lib/utils";
+import { CustomGeoJsonFeature } from "@/lib/types";
 
 const ItemLocation = ({
   geojson,

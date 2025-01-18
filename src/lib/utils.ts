@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { LocationScope } from "@/lib/types";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -15,11 +17,22 @@ export const roomTypes = [
   "triclinio",
 ];
 
+export const getColorByScope = (scope: LocationScope) => {
+  const colorMap: Record<LocationScope, string> = {
+    room: "red",
+    property: "yellow",
+    insula: "green",
+    regio: "blue",
+  };
+  return colorMap[scope];
+};
+
 // probably not the best way to do this, but figured this was better than either:
 // 1. storing regio geojson in JSON documents in Cosmos, taking more space; or
 // 2. making constant requests to P-LOD API to get regio geojson for each item
 export const regios: GeoJSON.Feature[] = [
-  { // won't be used since there's no regio 0
+  {
+    // won't be used since there's no regio 0
     type: "Feature",
     properties: { title: "" },
     geometry: {

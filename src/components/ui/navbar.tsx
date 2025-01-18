@@ -16,7 +16,6 @@ export default function Navbar() {
   const menus = [
     { title: "Home", path: "/" },
     { title: "Explore", path: "/items" },
-    { title: "Map", path: "/map" },
     { title: "About", path: "/about" },
   ];
 
@@ -29,10 +28,7 @@ export default function Navbar() {
             <span className="text-2xl font-semibold">PPMExplorer</span>
           </Link>
           <div className="md:hidden">
-            <Button
-              variant="secondary"
-              onClick={() => setState(!state)}
-            >
+            <Button variant="secondary" onClick={() => setState(!state)}>
               <Menu />
             </Button>
           </div>
@@ -46,7 +42,7 @@ export default function Navbar() {
             {menus.map((item, idx) => (
               <li
                 key={idx}
-                className={`text-primary hover:text-secondary ${
+                className={`text-primary hover:text-accent ${
                   pathname === item.path ? "font-bold" : ""
                 }`}
               >
