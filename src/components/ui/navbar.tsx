@@ -21,7 +21,7 @@ export default function Navbar() {
 
   return (
     <nav className="w-full border-b md:border-0">
-      <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
+      <div className="items-center px-4 max-w-screen-2xl mx-auto md:flex md:px-8">
         <div className="flex items-center justify-between py-3 md:py-5 md:block">
           <Link href="/" className="flex items-center space-x-2">
             <Image src="/logo.png" alt="PPMExplorer" width={50} height={50} />

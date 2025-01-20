@@ -22,7 +22,6 @@ const CollectionMap = ({
 }: {
   itemLocations: CustomGeoJsonFeature[];
 }) => {
-  const [title, setTitle] = useState<string>("Showing all regios");
   const [featureCollection, setFeatureCollection] =
     useState<GeoJSON.FeatureCollection>({
       type: "FeatureCollection",
@@ -41,45 +40,40 @@ const CollectionMap = ({
 
     setFeatureCollection(() => ({
       type: "FeatureCollection",
-      features: [...regios, ...newFeatures],
+      features: newFeatures,
     }));
   };
 
   return (
-    <div className="w-full">
-      <h1>{title}</h1>
-      <Map
-        center={{ lat: 40.75103, lng: 14.4884 }}
-        zoom={16}
-        width={"100%"}
-        height={"100vh"}
-      >
-        <GeoJSON
-          key={JSON.stringify(featureCollection)}
-          data={featureCollection}
-          style={() => ({ color: "red", fillOpacity: 0.1 })}
-          onEachFeature={(feature, layer) => {
-            layer.on("mouseover", () => {
-              layer.bindPopup(feature.properties.title).openPopup();
-            });
-            layer.on("click", async () => {
-              const location = feature.properties.title.split(":")[3];
-              setTitle(location);
-              handleFeatureClick(location);
-            });
-            }}
+    <Map
+      center={{ lat: 40.75103, lng: 14.4884 }}
+      zoom={16}
+      width={"100%"}
+      height={"100vh"}
+    >
+      <GeoJSON
+        key={JSON.stringify(featureCollection)}
+        data={featureCollection}
+        style={() => ({ color: "red", fillOpacity: 0.1 })}
+        onEachFeature={(feature, layer) => {
+          layer.on("mouseover", () => {
+            layer.bindPopup(feature.properties.title).openPopup();
+          });
+          layer.on("click", async () => {
+            handleFeatureClick(feature.properties.title);
+          });
+        }}
+      />
+      {itemLocations.length > 0 &&
+        itemLocations.map((location, index) => (
+          <Circle
+            key={`${JSON.stringify(location)}-${index}`}
+            center={location.properties.center}
+            fillColor="blue"
+            radius={5}
           />
-          {itemLocations.length > 0 &&
-            itemLocations.map((location, index) => (
-            <Circle
-              key={`${JSON.stringify(location)}-${index}`}
-              center={location.properties.center}
-              fillColor="blue"
-              radius={5}
-            />
-            ))}
-      </Map>
-    </div>
+        ))}
+    </Map>
   );
 };
 

@@ -1,7 +1,7 @@
 import { TabsContent } from "@/components/ui/tabs";
 import PolaroidGrid from "@/components/ui/polaroid-grid";
 import DataTable from "./data-table";
-import CollectionMap from './collection-map'
+import CollectionMap from "./collection-map";
 import TablePagination from "./pagination";
 import ViewSwitch from "./view-switch";
 import columns from "./columns";
@@ -38,13 +38,9 @@ const Page = async ({
           <PolaroidGrid items={items} />
         </TabsContent>
         <TabsContent value="map">
-          <CollectionMap itemLocations={
-            items.map((item) => ({
-              type: "Feature",
-              geometry: item.location.geojson.geometry,
-              properties: item.location.geojson.properties,
-            }))
-          } />
+          <CollectionMap
+            itemLocations={items.map((item) => item.location.geojson)}
+          />
         </TabsContent>
       </ViewSwitch>
       <div className="flex justify-center mt-4">

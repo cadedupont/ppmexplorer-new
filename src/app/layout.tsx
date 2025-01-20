@@ -41,7 +41,7 @@ const RootLayout = async ({
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NavBar />
-          <main className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
+          <main className="flex items-center justify-center px-4 max-w-screen-2xl mx-auto md:flex md:px-8">
             {children}
           </main>
         </ThemeProvider>

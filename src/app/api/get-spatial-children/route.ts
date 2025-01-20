@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   const { location } = await req.json();
-
   if (!location) {
     return NextResponse.json(
       { error: "Location is required" },
@@ -23,4 +22,4 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
-}
+};

@@ -25,7 +25,7 @@ const Polaroid = ({ item }: { item: PPMItem }) => {
       <CardHeader className="relative">
         <CardTitle className="flex flex-row items-center justify-between space-y-0">
             Volume {volume}, Page {page}, Image {imageIndex}
-          <Link href={`/${item.id}`}>
+          <Link href={`/items/${item.id}`}>
             <Button variant="link" size="icon">
               <ExternalLink />
             </Button>

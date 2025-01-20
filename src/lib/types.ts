@@ -1,4 +1,4 @@
-import { Feature, Polygon } from "geojson";
+import { Polygon } from "geojson";
 import { roomTypes } from "./utils";
 
 export type LocationScope = "room" | "property" | "insula" | "regio";
@@ -10,7 +10,12 @@ type CustomGeoJsonProperties = {
     lng: number;
   };
 };
-export type CustomGeoJsonFeature = Feature<Polygon, CustomGeoJsonProperties>;
+export type CustomGeoJsonFeature = {
+  type: "Feature";
+  properties: CustomGeoJsonProperties;
+  geometry: Polygon;
+  id: string;
+}
 
 export type PPMItem = {
   id: string; // e.g. "Volume_01_Page_002_image_1"
