@@ -17,7 +17,7 @@ import {
 import type { PPMItem } from "@/lib/types";
 
 const Polaroid = ({ item }: { item: PPMItem }) => {
-  const { id, imageURL, imageIndex, caption_it, volume, page, location } = item;
+  const { id, imageURL, imageIndex, caption_en, volume, page, location } = item;
   const { regio, insula, property, room } = location;
 
   return (
@@ -47,7 +47,7 @@ const Polaroid = ({ item }: { item: PPMItem }) => {
           onDragStart={(e) => e.preventDefault()}
         />
       </CardContent>
-      <CardFooter className="overflow-y-auto">{caption_it}</CardFooter>
+      <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>
     </Card>
   );
 };

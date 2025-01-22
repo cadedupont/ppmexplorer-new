@@ -1,9 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-
-import { CustomGeoJsonFeature } from "@/lib/types";
 
 const GeoJSON = dynamic(
   () => import("react-leaflet").then((module) => module.GeoJSON),
@@ -16,33 +15,50 @@ const Circle = dynamic(
 const Map = dynamic(() => import("@/components/ui/map"), { ssr: false });
 
 import { regios } from "@/lib/utils";
+import { CustomGeoJsonFeature } from "@/lib/types";
 
 const CollectionMap = ({
   itemLocations,
 }: {
   itemLocations: CustomGeoJsonFeature[];
 }) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [featureCollection, setFeatureCollection] =
     useState<GeoJSON.FeatureCollection>({
       type: "FeatureCollection",
-      features: regios,
+      features: [],
     });
 
-  const handleFeatureClick = async (location: string) => {
+  const getSpatialChildren = async (location: string) => {
     const response = await fetch("/api/get-spatial-children", {
       method: "POST",
       body: JSON.stringify({ location }),
     });
     const data = await response.json();
-    const newFeatures = data
-      .filter((feature: any) => feature.geojson !== "None") // spaces without geojson in P-LOD are marked "None" instead of null or undefined
-      .map((feature: any) => JSON.parse(feature.geojson));
-
-    setFeatureCollection(() => ({
-      type: "FeatureCollection",
-      features: newFeatures,
-    }));
+    return data;
   };
+
+  const handleFeatureClick = async (location: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("location", location);
+    router.push(`?${newParams.toString()}`);
+    setFeatureCollection({
+      type: "FeatureCollection",
+      features: await getSpatialChildren(location),
+    });
+  };
+
+  useEffect(() => {
+    const location = searchParams.get("location");
+    (async () => {
+      setFeatureCollection({
+        type: "FeatureCollection",
+        features: location ? await getSpatialChildren(location) : regios,
+      });
+    })();
+  }, [searchParams]);
 
   return (
     <Map
@@ -57,10 +73,12 @@ const CollectionMap = ({
         style={() => ({ color: "red", fillOpacity: 0.1 })}
         onEachFeature={(feature, layer) => {
           layer.on("mouseover", () => {
-            layer.bindPopup(feature.properties.title).openPopup();
+            layer.bindPopup(feature.properties.name).openPopup();
           });
           layer.on("click", async () => {
-            handleFeatureClick(feature.properties.title);
+            handleFeatureClick(
+              feature.id ? feature.id : feature.properties.name
+            );
           });
         }}
       />
@@ -68,7 +86,7 @@ const CollectionMap = ({
         itemLocations.map((location, index) => (
           <Circle
             key={`${JSON.stringify(location)}-${index}`}
-            center={location.properties.center}
+            center={location.properties.centroid}
             fillColor="blue"
             radius={5}
           />

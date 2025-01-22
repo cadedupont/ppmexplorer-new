@@ -14,7 +14,12 @@ import {
 
 const TablePagination = ({ currentPage }: { currentPage: number }) => {
   const searchParams = useSearchParams();
-  const view = searchParams.get("view") || "table";
+
+  const buildUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    return `/items?${params.toString()}`;
+  };
 
   return (
     <Pagination>
@@ -22,29 +27,22 @@ const TablePagination = ({ currentPage }: { currentPage: number }) => {
         {currentPage > 1 && (
           <>
             <PaginationItem>
-              <PaginationPrevious
-                href={`/items?view=${view}&page=${currentPage - 1}`}
-              />
+              <PaginationPrevious href={buildUrl(currentPage - 1)} />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink
-                href={`/items?view=${view}&page=${currentPage - 1}`}
-              >
+              <PaginationLink href={buildUrl(currentPage - 1)}>
                 {currentPage - 1}
               </PaginationLink>
             </PaginationItem>
           </>
         )}
         <PaginationItem>
-          <PaginationLink
-            href={`/items?view=${view}&page=${currentPage}`}
-            isActive
-          >
+          <PaginationLink href={buildUrl(currentPage)} isActive>
             {currentPage}
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href={`/items?view=${view}&page=${currentPage + 1}`}>
+          <PaginationLink href={buildUrl(currentPage + 1)}>
             {currentPage + 1}
           </PaginationLink>
         </PaginationItem>
@@ -52,9 +50,7 @@ const TablePagination = ({ currentPage }: { currentPage: number }) => {
           <PaginationEllipsis />
         </PaginationItem>
         <PaginationItem>
-          <PaginationNext
-            href={`/items?view=${view}&page=${currentPage + 1}`}
-          />
+          <PaginationNext href={buildUrl(currentPage + 1)} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

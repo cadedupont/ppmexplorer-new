@@ -1,11 +1,10 @@
 import { Polygon } from "geojson";
-import { roomTypes } from "./utils";
 
 export type LocationScope = "room" | "property" | "insula" | "regio";
 type CustomGeoJsonProperties = {
-  title: string;
+  name: string;
   scope: LocationScope;
-  center: {
+  centroid: {
     lat: number;
     lng: number;
   };
@@ -22,8 +21,7 @@ export type PPMItem = {
   imageURL: string; // e.g. https://ppmdata.blob.core.windows.net/ppm/images/{id}.jpg
   caption_it: string;
   caption_en: string;
-  roomType: (typeof roomTypes)[number];
-  volume: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  volume: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   page: number;
   imageIndex: 1 | 2 | 3 | 4;
   location: {

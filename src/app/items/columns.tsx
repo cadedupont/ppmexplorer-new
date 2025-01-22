@@ -32,10 +32,6 @@ const columns: ColumnDef<PPMItem>[] = [
     ),
   },
   {
-    accessorKey: "roomType",
-    header: "Room Type",
-  },
-  {
     accessorKey: "regio",
     header: "Regio",
     cell: ({ row }) => row.original.location.regio,

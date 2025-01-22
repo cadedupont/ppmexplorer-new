@@ -25,7 +25,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between py-3 md:py-5 md:block">
           <Link href="/" className="flex items-center space-x-2">
             <Image src="/logo.png" alt="PPMExplorer" width={50} height={50} />
-            <span className="text-2xl font-semibold">PPMExplorer</span>
+            <span className="text-2xl font-serif font-semibold">PPMExplorer</span>
           </Link>
           <div className="md:hidden">
             <Button variant="secondary" onClick={() => setState(!state)}>
