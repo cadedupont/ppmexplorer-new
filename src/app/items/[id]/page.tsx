@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 import Image from "next/image";
 import { Captions, BookOpenText, MapPin } from "lucide-react";
-import { GeoJSON } from "react-leaflet";
+import { GeoJSON, Marker, Popup } from "react-leaflet";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Map from "@/components/ui/map";
@@ -18,6 +18,7 @@ import type { PPMItem } from "@/lib/types";
 const Page = () => {
   const params = useParams<{ id: string }>();
   const id = params.id;
+
   const [item, setItem] = useState<PPMItem | null>(null);
   const [similarImages, setSimilarImages] = useState<PPMItem[]>([]);
   const [similarCaptions, setSimilarCaptions] = useState<PPMItem[]>([]);
@@ -77,18 +78,18 @@ const Page = () => {
                     height={"50vh"}
                   >
                     <GeoJSON
-                      key={item.location.geojson.id}
+                      key={JSON.stringify(item.location.geojson)}
                       data={item.location.geojson}
                       style={{
                         color: getColorByScope(
                           item.location.geojson.properties.scope
                         ),
-                        fillOpacity: 0.7,
+                        fillOpacity: 1.0,
                       }}
                     />
                     {item.location.geojson.properties.scope !== "regio" && (
                       <GeoJSON
-                        key={regios[item.location.regio].id}
+                        key={JSON.stringify(regios[item.location.regio])}
                         data={regios[item.location.regio]}
                         style={{ color: "blue" }}
                       />

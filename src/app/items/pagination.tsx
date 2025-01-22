@@ -12,13 +12,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const TablePagination = ({ currentPage }: { currentPage: number }) => {
+const TablePagination = () => {
   const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page"));
 
   const buildUrl = (page: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", page.toString());
-    return `/items?${params.toString()}`;
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("page", page.toString());
+    return `/items?${newParams.toString()}`;
   };
 
   return (

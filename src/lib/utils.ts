@@ -34,7 +34,7 @@ export const regios: GeoJSON.Feature[] = [
   {
     // won't be used since there's no regio 0
     type: "Feature",
-    properties: { title: "" },
+    properties: { name: "" },
     geometry: {
       type: "Polygon",
       coordinates: [],
@@ -43,7 +43,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r1" },
+    properties: { name: "Regio 1" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -92,7 +92,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r2" },
+    properties: { name: "Regio 2" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -144,7 +144,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r3" },
+    properties: { name: "Regio 3" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -181,7 +181,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r4" },
+    properties: { name: "Regio 4" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -213,7 +213,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r5" },
+    properties: { name: "Regio 5" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -246,7 +246,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r6" },
+    properties: { name: "Regio 6" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -341,7 +341,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r7" },
+    properties: { name: "Regio 7" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -501,7 +501,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r8" },
+    properties: { name: "Regio 8" },
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -710,7 +710,7 @@ export const regios: GeoJSON.Feature[] = [
   },
   {
     type: "Feature",
-    properties: { title: "urn:p-lod:id:r9" },
+    properties: { name: "Regio 9" },
     geometry: {
       type: "Polygon",
       coordinates: [

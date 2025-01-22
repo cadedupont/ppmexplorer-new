@@ -32,21 +32,18 @@ const CollectionMap = ({
     });
 
   const getSpatialChildren = async (location: string) => {
-    const response = await fetch("/api/get-spatial-children", {
-      method: "POST",
-      body: JSON.stringify({ location }),
-    });
+    const response = await fetch(`/api/geojson/${location}/spatial-children`);
     const data = await response.json();
     return data;
   };
 
-  const handleFeatureClick = async (location: string) => {
+  const handleFeatureClick = async (clickedFeature: GeoJSON.Feature) => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set("location", location);
+    newParams.set("location", clickedFeature.id as string);
     router.push(`?${newParams.toString()}`);
     setFeatureCollection({
       type: "FeatureCollection",
-      features: await getSpatialChildren(location),
+      features: await getSpatialChildren(clickedFeature.id as string),
     });
   };
 
@@ -70,15 +67,16 @@ const CollectionMap = ({
       <GeoJSON
         key={JSON.stringify(featureCollection)}
         data={featureCollection}
-        style={() => ({ color: "red", fillOpacity: 0.1 })}
+        style={{
+          color: "blue",
+          fillOpacity: 0.1,
+        }}
         onEachFeature={(feature, layer) => {
           layer.on("mouseover", () => {
             layer.bindPopup(feature.properties.name).openPopup();
           });
           layer.on("click", async () => {
-            handleFeatureClick(
-              feature.id ? feature.id : feature.properties.name
-            );
+            handleFeatureClick(feature);
           });
         }}
       />
