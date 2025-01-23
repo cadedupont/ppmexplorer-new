@@ -70,14 +70,16 @@ const Page = () => {
     router.replace(`/items?${newParams.toString()}`);
   };
 
-  const parseLocation = (location: string) => {
-    const parts = location.split(":")[3].split("-");
-    const regio = parts[0] ? `Regio: ${parts[0].slice(1)}` : "";
-    const insula = parts[1] ? `Insula: ${parts[1].slice(1)}` : "";
-    const property = parts[2] ? `Property: ${parts[2].slice(1)}` : "";
-    const room = parts[4] ? `Room: ${parts[4]}` : "";
-    return { regio, insula, property, room };
-  };
+  const parsedLocation = useMemo(() => {
+    if (!location) return {};
+    const parts = location.split(":")[3]?.split("-") || [];
+    return {
+      regio: parts[0] ? `Regio: ${parts[0].slice(1)}` : "",
+      insula: parts[1] ? `Insula: ${parts[1].slice(1)}` : "",
+      property: parts[2] ? `Property: ${parts[2].slice(1)}` : "",
+      room: parts[4] ? `Room: ${parts[4]}` : "",
+    };
+  }, [location]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -119,7 +121,7 @@ const Page = () => {
           updateSearchParams({ view: value, page: String(page) });
         }}
       >
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="table">
               <Table className="h-4 w-4 mr-2" />
@@ -173,7 +175,7 @@ const Page = () => {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Items Per Page</SelectLabel>
-                  {["5", "10", "20", "50", "100", "200"].map((num: string) => (
+                  {["5", "10", "20", "50", "100", "200", "500"].map((num: string) => (
                     <SelectItem key={num} value={num}>
                       {num}
                     </SelectItem>
@@ -208,7 +210,7 @@ const Page = () => {
             </Select>
           </div>
         </div>
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-4">
           {searchParams.has("query") && (
             <Badge variant="secondary">
               Search: {searchQuery}
@@ -226,7 +228,7 @@ const Page = () => {
             </Badge>
           )}
           {location &&
-            Object.entries(parseLocation(location)).map(([key, value]) =>
+            Object.entries(parsedLocation).map(([key, value]) =>
               value ? (
                 <Badge variant="secondary" key={key}>
                   {value}

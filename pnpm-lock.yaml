@@ -83,6 +83,9 @@ importers:
       react-leaflet:
         specifier: 5.0.0-rc.2
         version: 5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
+      react-leaflet-markercluster:
+        specifier: 5.0.0-rc.0
+        version: 5.0.0-rc.0(leaflet.markercluster@1.5.3(leaflet@1.9.4))(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1))(react@19.0.0-rc.1)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -2163,6 +2166,14 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react-leaflet-markercluster@5.0.0-rc.0:
+    resolution: {integrity: sha512-jWa4bPD5LfLV3Lid1RWgl+yKUuQtnqeYtJzzLb/fiRjvX+rtwzY8pMoUFuygqyxNrWxMTQlWKBHxkpI7Sxvu4Q==}
+    peerDependencies:
+      leaflet: ^1.9.4
+      leaflet.markercluster: ^1.5.3
+      react: ^19.0.0
+      react-leaflet: ^5.0.0
 
   react-leaflet@5.0.0-rc.2:
     resolution: {integrity: sha512-1xQGYG9mEIW+nfkQhqgHImwUuB1UDlnzYFSzv6PrBFDBeYrFmv0BbpwpNAFdJg/UQ2yz5UZSL7ZwlUxjwb8MZw==}
@@ -4784,6 +4795,16 @@ snapshots:
       scheduler: 0.25.0-rc.1
 
   react-is@16.13.1: {}
+
+  react-leaflet-markercluster@5.0.0-rc.0(leaflet.markercluster@1.5.3(leaflet@1.9.4))(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1))(react@19.0.0-rc.1):
+    dependencies:
+      '@react-leaflet/core': 3.0.0(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
+      leaflet: 1.9.4
+      leaflet.markercluster: 1.5.3(leaflet@1.9.4)
+      react: 19.0.0-rc.1
+      react-leaflet: 5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
+    transitivePeerDependencies:
+      - react-dom
 
   react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1):
     dependencies:

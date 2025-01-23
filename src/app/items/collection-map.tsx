@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
-import L, { map } from "leaflet";
-const icon = new L.Icon({
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  iconSize: [30, 40],
-  iconAnchor: [15, 30],
-});
-
+const MarkerClusterGroup = dynamic(
+  () => import("react-leaflet-markercluster").then((module) => module.default),
+  { ssr: false }
+);
 const GeoJSON = dynamic(
   () => import("react-leaflet").then((module) => module.GeoJSON),
   { ssr: false }
@@ -19,150 +17,136 @@ const Marker = dynamic(
   () => import("react-leaflet").then((module) => module.Marker),
   { ssr: false }
 );
+const Popup = dynamic(
+  () => import("react-leaflet").then((module) => module.Popup),
+  { ssr: false }
+);
+
 const PompeiiMap = dynamic(() => import("@/components/ui/pompeii-map"), {
   ssr: false,
 });
+import Polaroid from "@/components/ui/polaroid";
 
 import { regios } from "@/lib/constants";
 import { PPMItem } from "@/lib/types";
-import Polaroid from "@/components/ui/polaroid";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { getColorByScope } from "@/lib/utils";
+
+import "leaflet/dist/leaflet.css";
+import "react-leaflet-markercluster/styles";
 
 const CollectionMap = ({ items }: { items: PPMItem[] }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const location = searchParams.get("location");
 
-  const [featureCollection, setFeatureCollection] =
-    useState<GeoJSON.FeatureCollection>({
-      type: "FeatureCollection",
-      features: [],
-    });
-  const [selectedItems, setSelectedItems] = useState<PPMItem[]>(items);
-  const [itemCount, setItemCount] = useState<number>(items.length);
-  const initialCount = items.length;
-  const [domLoaded, setDomLoaded] = useState<boolean>(false);
-
-  const getSpatialChildren = async (location: string) => {
-    const response = await fetch(`/api/geojson/${location}/spatial-children`);
-    const data = await response.json();
-    return data;
-  };
-
-  const handleFeatureClick = async (clickedFeature: GeoJSON.Feature) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("location", clickedFeature.id as string);
-    newParams.set("page", "1");
-    router.push(`?${newParams.toString()}`);
-    setFeatureCollection({
-      type: "FeatureCollection",
-      features: await getSpatialChildren(clickedFeature.id as string),
-    });
-  };
-
+  const [icon, setIcon] = useState<L.Icon | null>(null);
   useEffect(() => {
-    setDomLoaded(true);
+    const createIcon = async () => {
+      const { Icon } = await import("leaflet");
+      const dynamicIcon = new Icon({
+        iconUrl:
+          "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-512.png",
+        iconSize: [48, 48],
+        iconAnchor: [24, 48],
+        popupAnchor: [0, -32],
+      });
+      setIcon(dynamicIcon);
+    };
+
+    createIcon();
   }, []);
 
-  useEffect(() => {
-    const location = searchParams.get("location");
-    (async () => {
-      setFeatureCollection({
-        type: "FeatureCollection",
-        features: location ? await getSpatialChildren(location) : regios,
-      });
-    })();
-  }, [searchParams]);
-
-  const groupedMarkers = new Map<string, PPMItem[]>();
-  items.forEach((item) => {
-    if (!item.location.geojson) {
-      console.log(item);
-      return;
-    }
-    const key = JSON.stringify(item.location.geojson.properties.centroid);
-    groupedMarkers.has(key)
-      ? groupedMarkers.get(key)?.push(item)
-      : groupedMarkers.set(key, [item]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["geojson", { location }],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/geojson/${location}/spatial-ancestors`
+      );
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      return {
+        features: data,
+      };
+    },
+    staleTime: Infinity,
+    enabled: !!location,
   });
+  const featureCollection: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: data?.features || regios,
+  };
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
-    <>
-      {domLoaded && (
-        <div className="flex h-screen">
-          <div className="w-2/3">
-            <PompeiiMap
-              centroid={{ lat: 40.75103, lon: 14.4884 }}
-              zoom={16}
-              width={"100%"}
-              height={"100vh"}
-            >
-              <GeoJSON
-                key={JSON.stringify(featureCollection)}
-                data={featureCollection}
-                style={{
-                  color: "red",
-                  fillOpacity: 0.1,
-                }}
-                onEachFeature={(feature, layer) => {
-                  layer.on("onmouseover", () => {
-                    layer.bindPopup(feature.properties.name).openPopup();
-                  });
-                  layer.on("click", async () => {
-                    handleFeatureClick(feature);
-                  });
-                }}
-              />
-              {Array.from(groupedMarkers.entries()).map(
-                ([geoJsonId, groupedItems], index) => {
-                  const centroid = JSON.parse(geoJsonId);
-                  return (
-                    <Marker
-                      position={centroid}
-                      key={geoJsonId}
-                      icon={icon}
-                      eventHandlers={{
-                        click: () => {
-                          setSelectedItems(groupedItems);
-                          setItemCount(groupedItems.length);
-                        },
-                      }}
-                    />
-                  );
-                }
-              )}
-            </PompeiiMap>
-          </div>
-          <div className="w-1/3 overflow-y-auto p-4">
-            {itemCount < initialCount && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setSelectedItems(items);
-                  setItemCount(initialCount);
+    <div className="flex h-screen">
+      <div className="w-3/4">
+        <PompeiiMap
+          centroid={{ lat: 40.75103, lon: 14.4884 }}
+          zoom={16}
+          width={"100%"}
+          height={"100vh"}
+        >
+          <GeoJSON
+            key={JSON.stringify(featureCollection)}
+            data={featureCollection}
+            style={(feature) => ({
+              color: getColorByScope(feature?.properties.scope) || "blue",
+              fillOpacity: 0.1,
+            })}
+          />
+          <MarkerClusterGroup
+            animate={true}
+            zoomToBoundsOnClick={true}
+            showCoverageOnHover={false}
+          >
+            {items.map((item: PPMItem) => (
+              <Marker
+                position={item.location.geojson.properties.centroid}
+                key={item.id}
+                icon={icon || undefined}
+                eventHandlers={{
+                  click:
+                    !location || (location && !location.includes("space"))
+                      ? () => {
+                          const newParams = new URLSearchParams(searchParams);
+                          newParams.set("location", item.location.geojson.id);
+                          newParams.set("page", "1");
+                          router.replace(`items?${newParams.toString()}`);
+                        }
+                      : undefined,
+                  mouseover: (e) => {
+                    e.target.openPopup();
+                  },
+                  mouseout: (e) => {
+                    e.target.closePopup();
+                  },
                 }}
               >
-                Clear <X />
-              </Button>
-            )}
-            {selectedItems.length > 0 ? (
-              selectedItems.map((item: PPMItem) => {
-                return (
-                  <div key={item.id} className="mb-4">
-                    <Polaroid
-                      item={item}
-                      searchParams={searchParams.toString()}
-                    />
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center">No results.</div>
-            )}
-          </div>
-        </div>
-      )}
-    </>
+                <Popup>{item.location.geojson.properties.name}</Popup>
+              </Marker>
+            ))}
+          </MarkerClusterGroup>
+        </PompeiiMap>
+      </div>
+      <div className="w-1/4 overflow-y-auto">
+        {items.length > 0 ? (
+          items.map((item: PPMItem) => {
+            return (
+              <div key={item.id} className="mb-4 ml-4">
+                <Polaroid item={item} searchParams={searchParams.toString()} />
+              </div>
+            );
+          })
+        ) : (
+          <div className="text-center">No results.</div>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -18,20 +18,20 @@ export const GET = async (
     );
     const data = await response.json();
 
-    const geojsons = data
+    const features = data
       .filter((item: any) => item.geojson !== "None") // spaces without geojson in P-LOD are marked "None" instead of null or undefined
       .map((item: any) => JSON.parse(item.geojson));
 
-    geojsons.forEach((geojson: any) => {
-      geojson.properties.name = geojson.properties.title
+    features.forEach((feature: any) => {
+      feature.properties.name = feature.properties.title
         .replace("urn:p-lod:id:r", "Regio ")
         .replace("-i", ", Insula ")
         .replace("-p", ", Property ")
         .replace("-space-", ", Room ");
-      delete geojson.properties.title;
+      delete feature.properties.title;
     });
 
-    return NextResponse.json(geojsons);
+    return NextResponse.json(features);
   } catch (err: any) {
     console.error(`Error fetching spatial children for ${id}:`, err);
     return NextResponse.json(

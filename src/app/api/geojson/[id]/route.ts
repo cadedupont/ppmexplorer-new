@@ -15,7 +15,15 @@ export const GET = async (
   try {
     const response = await fetch(`https://api.p-lod.org/geojson/${id}`);
     const data = await response.json();
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "No geojson found" },
+        { status: 404 }
+      );
+    }
     const geojson = JSON.parse(data.geojson);
+
     geojson.properties.name = geojson.properties.title
       .replace("urn:p-lod:id:r", "Regio ")
       .replace("-i", ", Insula ")
