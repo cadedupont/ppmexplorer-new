@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 import Image from "next/image";
 import { Captions, BookOpenText, MapPin } from "lucide-react";
-import { GeoJSON, Marker, Popup } from "react-leaflet";
+import { GeoJSON } from "react-leaflet";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Map from "@/components/ui/map";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import PolaroidGrid from "@/components/ui/polaroid-grid";
+import BreadcrumbTrail from "./breadcrumb-trail";
 
 import { regios, getColorByScope } from "@/lib/utils";
 import type { PPMItem } from "@/lib/types";
@@ -18,6 +19,7 @@ import type { PPMItem } from "@/lib/types";
 const Page = () => {
   const params = useParams<{ id: string }>();
   const id = params.id;
+  const searchParams = useSearchParams();
 
   const [item, setItem] = useState<PPMItem | null>(null);
   const [similarImages, setSimilarImages] = useState<PPMItem[]>([]);
@@ -39,7 +41,7 @@ const Page = () => {
       setIsLoading(false);
     };
     getItem(id);
-  }, [id]);
+  }, [id, searchParams]);
 
   return (
     <div>
@@ -52,6 +54,10 @@ const Page = () => {
       ) : (
         item && (
           <>
+            <BreadcrumbTrail
+              searchParams={searchParams}
+              currentItem={item.id}
+            />
             <div className="grid grid-cols-1 gap-4">
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <CardContent className="flex items-center justify-center">
@@ -145,11 +151,35 @@ const Page = () => {
             </div>
             <div className="mb-8">
               <h2 className="text-2xl font-bold mt-8 mb-4">Similar Images</h2>
-              <PolaroidGrid items={similarImages} />
+              <PolaroidGrid
+                items={similarImages}
+                searchParams={(() => {
+                  const newParams = new URLSearchParams(
+                    searchParams.toString()
+                  );
+                  const previous = newParams.get("previous");
+                  previous
+                    ? newParams.set("previous", `${previous},${item.id}`)
+                    : newParams.set("previous", item.id);
+                  return newParams.toString();
+                })()}
+              />
             </div>
             <div className="mb-8">
               <h2 className="text-2xl font-bold mt-8 mb-4">Similar Captions</h2>
-              <PolaroidGrid items={similarCaptions} />
+              <PolaroidGrid
+                items={similarCaptions}
+                searchParams={(() => {
+                  const newParams = new URLSearchParams(
+                    searchParams.toString()
+                  );
+                  const previous = newParams.get("previous");
+                  previous
+                    ? newParams.set("previous", `${previous},${item.id}`)
+                    : newParams.set("previous", item.id);
+                  return newParams.toString();
+                })()}
+              />
             </div>
           </>
         )

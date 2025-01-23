@@ -23,10 +23,9 @@ import LoadingSpinner from "@/components/ui/loading-spinner";
 import DataTable from "./data-table";
 import CollectionMap from "./collection-map";
 import TablePagination from "./pagination";
-import columns from "./columns";
+import useColumns from "./columns";
 
 import type { PPMItem } from "@/lib/types";
-import useColumns from "./columns";
 
 const Page = () => {
   const router = useRouter();
@@ -201,12 +200,15 @@ const Page = () => {
           <div>
             <TabsContent value="table">
               <DataTable
-                columns={useColumns(items.some((item) => item.similarityScore))}
+                columns={useColumns(
+                  items.some((item) => item.similarityScore),
+                  searchParams.toString()
+                )}
                 data={items}
               />
             </TabsContent>
             <TabsContent value="grid">
-              <PolaroidGrid items={items} />
+              <PolaroidGrid items={items} searchParams={searchParams.toString()} />
             </TabsContent>
             <TabsContent value="map">
               <CollectionMap

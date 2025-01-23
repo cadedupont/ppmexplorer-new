@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 
 import type { PPMItem } from "@/lib/types";
 
-const useColumns = (showSimilarity: boolean): ColumnDef<PPMItem>[] => {
+const useColumns = (
+  showSimilarity: boolean,
+  searchParams: string
+): ColumnDef<PPMItem>[] => {
   const columns: ColumnDef<PPMItem>[] = showSimilarity
     ? [
         {
@@ -69,7 +72,12 @@ const useColumns = (showSimilarity: boolean): ColumnDef<PPMItem>[] => {
       accessorKey: "open",
       header: "",
       cell: ({ row }) => (
-        <Link href={`/items/${row.original.id}`}>
+        <Link
+          href={{
+            pathname: `/items/${row.original.id}`,
+            query: searchParams,
+          }}
+        >
           <Button variant="link" size="icon">
             <ExternalLink />
           </Button>
