@@ -12,9 +12,10 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const TablePagination = () => {
+const TablePagination = ({ itemCount }: { itemCount: number }) => {
   const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page"));
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 10;
 
   const buildUrl = (page: number) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -42,17 +43,21 @@ const TablePagination = () => {
             {currentPage}
           </PaginationLink>
         </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href={buildUrl(currentPage + 1)}>
-            {currentPage + 1}
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href={buildUrl(currentPage + 1)} />
-        </PaginationItem>
+        {currentPage < Math.ceil(itemCount / limit) && (
+          <>
+            <PaginationItem>
+              <PaginationLink href={buildUrl(currentPage + 1)}>
+                {currentPage + 1}
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href={buildUrl(currentPage + 1)} />
+            </PaginationItem>
+          </>
+        )}
       </PaginationContent>
     </Pagination>
   );

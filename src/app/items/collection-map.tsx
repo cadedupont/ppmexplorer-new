@@ -68,7 +68,7 @@ const CollectionMap = ({
         key={JSON.stringify(featureCollection)}
         data={featureCollection}
         style={{
-          color: "blue",
+          color: "red",
           fillOpacity: 0.1,
         }}
         onEachFeature={(feature, layer) => {

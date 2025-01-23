@@ -26,6 +26,7 @@ import TablePagination from "./pagination";
 import columns from "./columns";
 
 import type { PPMItem } from "@/lib/types";
+import useColumns from "./columns";
 
 const Page = () => {
   const router = useRouter();
@@ -39,6 +40,7 @@ const Page = () => {
   const query = searchParams.get("query") || "";
 
   const [items, setItems] = useState<PPMItem[]>([]);
+  const [itemCount, setItemCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(query);
@@ -69,7 +71,12 @@ const Page = () => {
       setError(null);
       const response = await fetch(url);
       const data = await response.json();
-      data.error ? setError(data.error) : setItems(data);
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setItems(data.items);
+        setItemCount(data.count);
+      }
       setIsLoading(false);
     };
 
@@ -105,7 +112,7 @@ const Page = () => {
               Map
             </TabsTrigger>
           </TabsList>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Input
               type="text"
               placeholder="Search..."
@@ -116,6 +123,29 @@ const Page = () => {
               }}
             />
             <Button onClick={handleSearch}>Search</Button>
+            <Select
+              value={String(limit)}
+              onValueChange={(value: string) => {
+                const newParams = new URLSearchParams(searchParams.toString());
+                newParams.set("page", "1");
+                newParams.set("limit", value);
+                router.push(`/items?${newParams.toString()}`);
+              }}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Items Per Page</SelectLabel>
+                  {["5", "10", "20", "50", "100"].map((num: string) => (
+                    <SelectItem key={num} value={num}>
+                      {num}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         {location && (
@@ -170,7 +200,10 @@ const Page = () => {
         ) : (
           <div>
             <TabsContent value="table">
-              <DataTable columns={columns} data={items} />
+              <DataTable
+                columns={useColumns(items.some((item) => item.similarityScore))}
+                data={items}
+              />
             </TabsContent>
             <TabsContent value="grid">
               <PolaroidGrid items={items} />
@@ -182,33 +215,8 @@ const Page = () => {
             </TabsContent>
           </div>
         )}
-        <div className="flex justify-between items-center mt-8 gap-4">
-          <TablePagination />
-          <div className="flex items-center gap-4">
-            <Select
-              value={String(limit)}
-              onValueChange={(value: string) => {
-                const newParams = new URLSearchParams(searchParams.toString());
-                newParams.set("page", "1");
-                newParams.set("limit", value);
-                router.push(`/items?${newParams.toString()}`);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Items Per Page</SelectLabel>
-                  {["5", "10", "20", "50", "100"].map((num: string) => (
-                    <SelectItem key={num} value={num}>
-                      {num}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="flex items-center mt-8">
+          <TablePagination itemCount={itemCount} />
         </div>
       </Tabs>
     </div>

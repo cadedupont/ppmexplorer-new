@@ -33,4 +33,5 @@ export type PPMItem = {
   };
   captionVector: number[]; // length 1024
   imageVector: number[]; // length 1024
+  similarityScore?: number;
 };

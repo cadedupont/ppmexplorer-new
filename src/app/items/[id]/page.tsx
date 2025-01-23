@@ -70,9 +70,10 @@ const Page = () => {
                   <Map
                     center={item.location.geojson.properties.centroid}
                     zoom={
-                      item.location.geojson.properties.scope === "regio"
-                        ? 13
-                        : 20
+                      item.location.geojson.properties.scope === "room" ||
+                      item.location.geojson.properties.scope === "property"
+                        ? 20
+                        : 17
                     }
                     width={"100%"}
                     height={"50vh"}
@@ -84,14 +85,14 @@ const Page = () => {
                         color: getColorByScope(
                           item.location.geojson.properties.scope
                         ),
-                        fillOpacity: 1.0,
+                        fillOpacity: 0.8,
                       }}
                     />
                     {item.location.geojson.properties.scope !== "regio" && (
                       <GeoJSON
                         key={JSON.stringify(regios[item.location.regio])}
                         data={regios[item.location.regio]}
-                        style={{ color: "blue" }}
+                        style={{ color: "blue", fillOpacity: 0.1 }}
                       />
                     )}
                   </Map>

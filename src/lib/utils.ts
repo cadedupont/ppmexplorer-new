@@ -7,6 +7,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const TOTAL_PPM_ITEMS = 17319;
+
 export const roomTypes = [
   "ambiente",
   "stalla",
