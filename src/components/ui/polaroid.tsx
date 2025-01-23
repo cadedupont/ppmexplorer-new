@@ -27,7 +27,7 @@ const Polaroid = ({
     id,
     imageURL,
     imageIndex,
-    caption_en,
+    caption_it,
     volume,
     page,
     location,
@@ -40,7 +40,7 @@ const Polaroid = ({
       <Card className="h-[600px] flex flex-col">
         <CardHeader className="relative">
           <CardTitle className="flex flex-row items-center justify-between space-y-0">
-            Volume {volume}, Page {page}, Image {imageIndex}
+            Volume {volume}, Page {page} (Image {imageIndex})
             <Link
               href={{
                 pathname: `/items/${item.id}`,
@@ -73,7 +73,7 @@ const Polaroid = ({
             onDragStart={(e) => e.preventDefault()}
           />
         </CardContent>
-        <CardFooter className="overflow-y-auto">{caption_en}</CardFooter>
+        <CardFooter className="overflow-y-auto">{caption_it}</CardFooter>
       </Card>
     </>
   );

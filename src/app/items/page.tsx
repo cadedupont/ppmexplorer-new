@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 import { Table, Grid2x2, Map, X } from "lucide-react";
 
@@ -14,6 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,35 +32,42 @@ import PolaroidGrid from "@/components/ui/polaroid-grid";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import DataTable from "./data-table";
 import CollectionMap from "./collection-map";
-import TablePagination from "./pagination";
 import useColumns from "./columns";
 
 import type { PPMItem } from "@/lib/types";
-import { TOTAL_PPM_ITEM_COUNT } from "@/lib/constants";
 
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const page = Number(searchParams.get("page")) || 1;
-  const limit = Number(searchParams.get("limit")) || 10;
-  const offset = (page - 1) * limit;
-  const view = searchParams.get("view") || "table";
+  const [view, setView] = useState<string>(searchParams.get("view") || "table");
+  const [searchQuery, setSearchQuery] = useState<string>(
+    searchParams.get("query") || ""
+  );
+  const [vectorType, setVectorType] = useState<string>(
+    searchParams.get("vector") || "caption"
+  );
+  const [limit, setLimit] = useState<number>(
+    Number(searchParams.get("limit")) || 10
+  );
+  const page = useMemo(
+    () => Number(searchParams.get("page")) || 1,
+    [searchParams]
+  );
+  const offset = useMemo(() => (page - 1) * limit, [page, limit]);
   const location = searchParams.get("location");
-  const query = searchParams.get("query") || "";
-  const vectorType = searchParams.get("vector") || "";
+  const query = searchParams.get("query");
 
-  const [items, setItems] = useState<PPMItem[]>([]);
-  const [itemCount, setItemCount] = useState<number>(TOTAL_PPM_ITEM_COUNT);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>(query);
-  // const [vectorType, setVectorType] = useState<string>("caption");
-
-  const handleSearch = () => {
+  const updateSearchParams = (updates: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set("query", searchQuery);
-    router.push(`/items?${newParams.toString()}`);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value);
+      }
+    });
+    router.replace(`/items?${newParams.toString()}`);
   };
 
   const parseLocation = (location: string) => {
@@ -62,37 +79,35 @@ const Page = () => {
     return { regio, insula, property, room };
   };
 
-  useEffect(() => {
-    const getItems = async () => {
-      try {
-        const base = query ? "/api/search" : "/api/items";
-        let url = `${base}?offset=${offset}&limit=${limit}`;
-        if (location) url += `&location=${location}`;
-        if (query) url += `&query=${encodeURIComponent(query)}`;
-        if (vectorType) url += `&vector=${vectorType}`;
-
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setItems(data.items);
-          setItemCount(data.count || TOTAL_PPM_ITEM_COUNT);
-        }
-      } catch (err) {
-        setError("Failed to fetch items. Please try again.");
-      } finally {
-        setIsLoading(false);
+  const { data, isLoading, error } = useQuery({
+    queryKey: [
+      "items",
+      { offset, limit, location, query, vectorType: query ? vectorType : null },
+    ],
+    queryFn: async () => {
+      let url = `${
+        query ? `api/search` : `/api/items`
+      }?offset=${offset}&limit=${limit}`;
+      if (location) url += `&location=${location}`;
+      if (query) url += `&query=${query}&vector=${vectorType}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
       }
-    };
-
-    getItems();
-  }, [limit, offset, location, query, vectorType]);
+      return data;
+    },
+    staleTime: Infinity,
+  });
 
   if (error) {
-    return <div className="container mx-auto py-10 text-red-500">{error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-red-500">
+          {error?.message || "An error occurred. Please try again later."}
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -100,9 +115,8 @@ const Page = () => {
       <Tabs
         value={view}
         onValueChange={(value) => {
-          const newParams = new URLSearchParams(searchParams.toString());
-          newParams.set("view", value);
-          router.push(`/items?${newParams.toString()}`);
+          setView(value);
+          updateSearchParams({ view: value, page: String(page) });
         }}
       >
         <div className="grid grid-cols-2 gap-4 mb-8">
@@ -127,17 +141,30 @@ const Page = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  updateSearchParams({ query: searchQuery, page: "1" });
+                }
               }}
             />
-            <Button onClick={handleSearch}>Search</Button>
+            <Button
+              onClick={() => {
+                updateSearchParams({ query: searchQuery, page: "1" });
+              }}
+            >
+              Search
+            </Button>
             <Select
               value={String(limit)}
               onValueChange={(value: string) => {
-                const newParams = new URLSearchParams(searchParams.toString());
-                newParams.set("page", "1");
-                newParams.set("limit", value);
-                router.push(`/items?${newParams.toString()}`);
+                setLimit(Number(value));
+                updateSearchParams({
+                  limit: value,
+                  page: String(
+                    page > (Math.ceil(data.count / Number(value)) || 1)
+                      ? 1
+                      : page
+                  ),
+                });
               }}
             >
               <SelectTrigger className="w-24">
@@ -146,7 +173,7 @@ const Page = () => {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Items Per Page</SelectLabel>
-                  {["5", "10", "20", "50", "100"].map((num: string) => (
+                  {["5", "10", "20", "50", "100", "200"].map((num: string) => (
                     <SelectItem key={num} value={num}>
                       {num}
                     </SelectItem>
@@ -157,10 +184,11 @@ const Page = () => {
             <Select
               value={String(vectorType)}
               onValueChange={(value: string) => {
-                const newParams = new URLSearchParams(searchParams.toString());
-                newParams.set("page", "1");
-                newParams.set("vector", value);
-                router.push(`/items?${newParams.toString()}`);
+                setVectorType(value);
+                updateSearchParams({
+                  vector: value,
+                  page: query ? "1" : String(page),
+                });
               }}
             >
               <SelectTrigger className="w-24">
@@ -180,20 +208,16 @@ const Page = () => {
             </Select>
           </div>
         </div>
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-8">
           {searchParams.has("query") && (
             <Badge variant="secondary">
-              Search: "{searchParams.get("query")}"
+              Search: {searchQuery}
               <Button
                 variant="link"
                 size="sm"
                 className="ml-2"
                 onClick={() => {
-                  const newParams = new URLSearchParams(
-                    searchParams.toString()
-                  );
-                  newParams.delete("query");
-                  router.push(`/items?${newParams.toString()}`);
+                  updateSearchParams({ query: null, page: "1" });
                   setSearchQuery("");
                 }}
               >
@@ -215,7 +239,6 @@ const Page = () => {
                         searchParams.toString()
                       );
                       const location = newParams.get("location") as string;
-
                       if (key === "room") {
                         newParams.set(
                           "location",
@@ -234,8 +257,7 @@ const Page = () => {
                       } else {
                         newParams.delete("location");
                       }
-
-                      router.push(`/items?${newParams.toString()}`);
+                      router.replace(`/items?${newParams.toString()}`);
                     }}
                   >
                     <X />
@@ -253,26 +275,75 @@ const Page = () => {
             <TabsContent value="table">
               <DataTable
                 columns={useColumns(
-                  items.some((item) => item.similarityScore),
+                  data.items.some((item: PPMItem) => item.similarityScore),
                   searchParams.toString()
                 )}
-                data={items}
+                data={data.items}
               />
             </TabsContent>
             <TabsContent value="grid">
               <PolaroidGrid
-                items={items}
+                items={data.items}
                 searchParams={searchParams.toString()}
               />
             </TabsContent>
             <TabsContent value="map">
-              <CollectionMap items={items} />
+              <CollectionMap items={data.items} />
             </TabsContent>
+            <div className="flex items-center mt-8">
+              <Pagination>
+                <PaginationContent>
+                  {page > 1 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => {
+                            updateSearchParams({ page: String(page - 1) });
+                          }}
+                        />
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => {
+                            updateSearchParams({ page: String(page - 1) });
+                          }}
+                        >
+                          {page - 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink isActive>{page}</PaginationLink>
+                  </PaginationItem>
+                  {page < Math.ceil(data.count / limit) && (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => {
+                            updateSearchParams({ page: String(page + 1) });
+                          }}
+                        >
+                          {page + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => {
+                            updateSearchParams({ page: String(page + 1) });
+                          }}
+                        />
+                      </PaginationItem>
+                    </>
+                  )}
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
         )}
-        <div className="flex items-center mt-8">
-          <TablePagination itemCount={itemCount} />
-        </div>
       </Tabs>
     </div>
   );

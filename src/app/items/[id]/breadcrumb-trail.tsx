@@ -54,7 +54,15 @@ const BreadcrumbTrail = ({
               </>
             ) : (
               <>
-                <BreadcrumbLink href={`/items?${searchParams.toString()}`}>
+                <BreadcrumbLink
+                  href={`/items?${(() => {
+                    const newParams = new URLSearchParams(
+                      searchParams.toString()
+                    );
+                    newParams.delete("previous");
+                    return newParams.toString();
+                  })()}`}
+                >
                   {searchParams.has("view")
                     ? (searchParams.get("view")?.charAt(0).toUpperCase() ||
                         "") + (searchParams.get("view")?.slice(1) || "")

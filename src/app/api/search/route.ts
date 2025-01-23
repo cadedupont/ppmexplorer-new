@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { cosmosContainer } from "@/lib/cosmos";
 import { openaiClient } from "@/lib/openai";
+import { TOTAL_PPM_ITEM_COUNT } from "@/lib/constants";
 
 const embeddingCache: Map<string, number[]> = new Map();
 
 const getImageEmbedding = async (query: string) => {
   try {
+    if (embeddingCache.has(`${query}:image`)) {
+      return embeddingCache.get(`${query}:image`);
+    }
     const response = await fetch(
       `${String(
         process.env.AZURE_AI_VISION_ENDPOINT
@@ -23,7 +27,9 @@ const getImageEmbedding = async (query: string) => {
       }
     );
     const data = await response.json();
-    return data.vector;
+    const embedding = data.vector;
+    embeddingCache.set(`${query}:image`, embedding);
+    return embedding;
   } catch (err: any) {
     console.error(`Failed to get image embedding for "${query}"`, err);
     return null;
@@ -32,8 +38,8 @@ const getImageEmbedding = async (query: string) => {
 
 const getCaptionEmbedding = async (query: string) => {
   try {
-    if (embeddingCache.has(query)) {
-      return embeddingCache.get(query);
+    if (embeddingCache.has(`${query}:caption`)) {
+      return embeddingCache.get(`${query}:caption`);
     }
     const response = await openaiClient.embeddings.create({
       model: "text-embedding-3-large",
@@ -41,7 +47,7 @@ const getCaptionEmbedding = async (query: string) => {
       input: [query],
     });
     const embedding = response.data[0].embedding;
-    embeddingCache.set(query, embedding);
+    embeddingCache.set(`${query}:caption`, embedding);
     return embedding;
   } catch (err: any) {
     console.error(`Failed to get embedding for "${query}"`, err);
@@ -86,14 +92,34 @@ export const GET = async (req: NextRequest) => {
       isCaption ? `c.captionVector` : `c.imageVector`
     }, @vector) OFFSET @offset LIMIT @limit`;
 
-    const { resources: items } = await cosmosContainer.items
-      .query({
-        query: itemQuery,
-        parameters: itemParameters,
-      })
-      .fetchAll();
+    // fetch items and count in parallel since they're independent
+    const [items, count] = await Promise.all([
+      cosmosContainer.items
+        .query({
+          query: itemQuery,
+          parameters: itemParameters,
+        })
+        .fetchAll(),
+      location
+        ? (async () => {
+            let countQuery = `SELECT VALUE COUNT(1) FROM c`;
+            const countParameters: { name: string; value: any }[] = [];
+            if (location) {
+              countQuery += ` WHERE CONTAINS(c.location.geojson.id, @location)`;
+              countParameters.push({ name: "@location", value: location });
+            }
+            const { resources: count } = await cosmosContainer.items
+              .query({
+                query: countQuery,
+                parameters: countParameters,
+              })
+              .fetchAll();
+            return count[0];
+          })()
+        : TOTAL_PPM_ITEM_COUNT,
+    ]);
 
-    return NextResponse.json({ items });
+    return NextResponse.json({ items: items.resources, count });
   } catch (err: any) {
     console.error(`Failed to fetch items`, err);
     return NextResponse.json(

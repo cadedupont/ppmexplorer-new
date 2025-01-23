@@ -26,6 +26,8 @@ const PompeiiMap = dynamic(() => import("@/components/ui/pompeii-map"), {
 import { regios } from "@/lib/constants";
 import { PPMItem } from "@/lib/types";
 import Polaroid from "@/components/ui/polaroid";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const CollectionMap = ({ items }: { items: PPMItem[] }) => {
   const searchParams = useSearchParams();
@@ -37,6 +39,8 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
       features: [],
     });
   const [selectedItems, setSelectedItems] = useState<PPMItem[]>(items);
+  const [itemCount, setItemCount] = useState<number>(items.length);
+  const initialCount = items.length;
   const [domLoaded, setDomLoaded] = useState<boolean>(false);
 
   const getSpatialChildren = async (location: string) => {
@@ -120,6 +124,7 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
                       eventHandlers={{
                         click: () => {
                           setSelectedItems(groupedItems);
+                          setItemCount(groupedItems.length);
                         },
                       }}
                     />
@@ -129,7 +134,18 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
             </PompeiiMap>
           </div>
           <div className="w-1/3 overflow-y-auto p-4">
-            {selectedItems &&
+            {itemCount < initialCount && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedItems(items);
+                  setItemCount(initialCount);
+                }}
+              >
+                Clear <X />
+              </Button>
+            )}
+            {selectedItems.length > 0 ? (
               selectedItems.map((item: PPMItem) => {
                 return (
                   <div key={item.id} className="mb-4">
@@ -139,7 +155,10 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
                     />
                   </div>
                 );
-              })}
+              })
+            ) : (
+              <div className="text-center">No results.</div>
+            )}
           </div>
         </div>
       )}

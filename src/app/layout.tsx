@@ -3,8 +3,10 @@ import { Copse, Figtree } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import NavBar from "@/components/ui/navbar";
+import ReactQueryProvider from "@/components/react-query-provider";
 
 import "./globals.css";
+import React from "react";
 
 const copse = Copse({
   weight: "400",
@@ -39,12 +41,14 @@ const RootLayout = async ({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NavBar />
-          <main className="flex items-center justify-center px-4 max-w-screen-2xl mx-auto md:flex md:px-8">
-            {children}
-          </main>
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <NavBar />
+            <main className="flex items-center justify-center px-4 max-w-screen-2xl mx-auto md:flex md:px-8">
+              {children}
+            </main>
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

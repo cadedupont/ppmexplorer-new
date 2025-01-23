@@ -52,7 +52,7 @@ const PaginationLink = ({
         variant: isActive ? "outline" : "ghost",
         size,
       }),
-      className
+      cn("cursor-pointer", className)
     )}
     {...props}
   />
