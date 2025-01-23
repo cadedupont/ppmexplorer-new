@@ -14,7 +14,6 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const menus = [
-    { title: "Home", path: "/" },
     { title: "Explore", path: "/items" },
     { title: "About", path: "/about" },
   ];

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { Table, Grid2x2, Map, X, Key } from "lucide-react";
+import { Table, Grid2x2, Map, X } from "lucide-react";
 
 import {
   Select,
@@ -26,6 +26,7 @@ import TablePagination from "./pagination";
 import useColumns from "./columns";
 
 import type { PPMItem } from "@/lib/types";
+import { TOTAL_PPM_ITEM_COUNT } from "@/lib/constants";
 
 const Page = () => {
   const router = useRouter();
@@ -37,12 +38,14 @@ const Page = () => {
   const view = searchParams.get("view") || "table";
   const location = searchParams.get("location");
   const query = searchParams.get("query") || "";
+  const vectorType = searchParams.get("vector") || "";
 
   const [items, setItems] = useState<PPMItem[]>([]);
-  const [itemCount, setItemCount] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [itemCount, setItemCount] = useState<number>(TOTAL_PPM_ITEM_COUNT);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState(query);
+  const [searchQuery, setSearchQuery] = useState<string>(query);
+  // const [vectorType, setVectorType] = useState<string>("caption");
 
   const handleSearch = () => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -61,26 +64,32 @@ const Page = () => {
 
   useEffect(() => {
     const getItems = async () => {
-      const base = query ? "/api/search" : "/api/items";
-      let url = `${base}?offset=${offset}&limit=${limit}`;
-      if (location) url += `&location=${location}`;
-      if (query) url += `&query=${encodeURIComponent(query)}`;
+      try {
+        const base = query ? "/api/search" : "/api/items";
+        let url = `${base}?offset=${offset}&limit=${limit}`;
+        if (location) url += `&location=${location}`;
+        if (query) url += `&query=${encodeURIComponent(query)}`;
+        if (vectorType) url += `&vector=${vectorType}`;
 
-      setIsLoading(true);
-      setError(null);
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setItems(data.items);
-        setItemCount(data.count);
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setItems(data.items);
+          setItemCount(data.count || TOTAL_PPM_ITEM_COUNT);
+        }
+      } catch (err) {
+        setError("Failed to fetch items. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     getItems();
-  }, [limit, offset, location, query]);
+  }, [limit, offset, location, query, vectorType]);
 
   if (error) {
     return <div className="container mx-auto py-10 text-red-500">{error}</div>;
@@ -145,11 +154,55 @@ const Page = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <Select
+              value={String(vectorType)}
+              onValueChange={(value: string) => {
+                const newParams = new URLSearchParams(searchParams.toString());
+                newParams.set("page", "1");
+                newParams.set("vector", value);
+                router.push(`/items?${newParams.toString()}`);
+              }}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Vector Search Type</SelectLabel>
+                  <SelectItem key={"caption"} value="caption">
+                    Caption
+                  </SelectItem>
+                  <SelectItem key={"image"} value="image">
+                    Image
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        {location && (
-          <div className="flex gap-2 mb-4">
-            {Object.entries(parseLocation(location)).map(([key, value]) =>
+        <div className="flex gap-2 mb-4">
+          {searchParams.has("query") && (
+            <Badge variant="secondary">
+              Search: "{searchParams.get("query")}"
+              <Button
+                variant="link"
+                size="sm"
+                className="ml-2"
+                onClick={() => {
+                  const newParams = new URLSearchParams(
+                    searchParams.toString()
+                  );
+                  newParams.delete("query");
+                  router.push(`/items?${newParams.toString()}`);
+                  setSearchQuery("");
+                }}
+              >
+                <X />
+              </Button>
+            </Badge>
+          )}
+          {location &&
+            Object.entries(parseLocation(location)).map(([key, value]) =>
               value ? (
                 <Badge variant="secondary" key={key}>
                   {value}
@@ -190,8 +243,7 @@ const Page = () => {
                 </Badge>
               ) : null
             )}
-          </div>
-        )}
+        </div>
         {isLoading ? (
           <div className="flex items-center justify-center min-h-[50vh]">
             <LoadingSpinner />
@@ -208,12 +260,13 @@ const Page = () => {
               />
             </TabsContent>
             <TabsContent value="grid">
-              <PolaroidGrid items={items} searchParams={searchParams.toString()} />
+              <PolaroidGrid
+                items={items}
+                searchParams={searchParams.toString()}
+              />
             </TabsContent>
             <TabsContent value="map">
-              <CollectionMap
-                itemLocations={items.map((item) => item.location.geojson)}
-              />
+              <CollectionMap items={items} />
             </TabsContent>
           </div>
         )}

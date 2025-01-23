@@ -6,7 +6,7 @@ type CustomGeoJsonProperties = {
   scope: LocationScope;
   centroid: {
     lat: number;
-    lng: number;
+    lon: number;
   };
 };
 export type CustomGeoJsonFeature = {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { cosmosContainer } from "@/lib/cosmos";
-import { TOTAL_PPM_ITEMS } from "@/lib/utils";
+import { TOTAL_PPM_ITEM_COUNT } from "@/lib/constants";
 
 export const GET = async (req: NextRequest) => {
   const offset = Number(req.nextUrl.searchParams.get("offset"));
@@ -44,7 +44,7 @@ export const GET = async (req: NextRequest) => {
             .fetchAll();
           return count[0];
         })()
-      : TOTAL_PPM_ITEMS;
+      : TOTAL_PPM_ITEM_COUNT;
 
     return NextResponse.json({ items, count });
   } catch (err: any) {

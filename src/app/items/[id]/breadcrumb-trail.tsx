@@ -35,11 +35,11 @@ const BreadcrumbTrail = ({
 
   return (
     <div>
-      <Breadcrumb className="mb-4">
+      <Breadcrumb className="mb-8">
         <BreadcrumbList>
-          {query && (
-            <>
-              <BreadcrumbItem>
+          <BreadcrumbItem>
+            {query ? (
+              <>
                 <BreadcrumbLink
                   href={`/items?${(() => {
                     const newParams = new URLSearchParams(
@@ -51,10 +51,19 @@ const BreadcrumbTrail = ({
                 >
                   Search "{query}"
                 </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                <BreadcrumbLink href={`/items?${searchParams.toString()}`}>
+                  {searchParams.has("view")
+                    ? (searchParams.get("view")?.charAt(0).toUpperCase() ||
+                        "") + (searchParams.get("view")?.slice(1) || "")
+                    : "Explore"}
+                </BreadcrumbLink>
+              </>
+            )}
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
           {previousItems.length >= 2 && (
             <>
               <BreadcrumbItem>
@@ -83,7 +92,7 @@ const BreadcrumbTrail = ({
                         return (
                           <DropdownMenuItem key={reverseIndex}>
                             <BreadcrumbLink
-                              href={`/item/${item}?${newParams.toString()}`}
+                              href={`/items/${item}?${newParams.toString()}`}
                             >
                               {formatItem(item)}
                             </BreadcrumbLink>
@@ -100,7 +109,7 @@ const BreadcrumbTrail = ({
             <>
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href={`/item/${
+                  href={`/items/${
                     previousItems[previousItems.length - 1]
                   }?${(() => {
                     const newParams = new URLSearchParams(

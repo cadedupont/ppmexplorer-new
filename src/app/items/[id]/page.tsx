@@ -8,12 +8,13 @@ import { Captions, BookOpenText, MapPin } from "lucide-react";
 import { GeoJSON } from "react-leaflet";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Map from "@/components/ui/map";
+import PompeiiMap from "@/components/ui/pompeii-map";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import PolaroidGrid from "@/components/ui/polaroid-grid";
 import BreadcrumbTrail from "./breadcrumb-trail";
 
-import { regios, getColorByScope } from "@/lib/utils";
+import { getColorByScope } from "@/lib/utils";
+import { regios } from "@/lib/constants";
 import type { PPMItem } from "@/lib/types";
 
 const Page = () => {
@@ -29,19 +30,28 @@ const Page = () => {
 
   useEffect(() => {
     const getItem = async (id: string) => {
-      const response = await fetch(`/api/items/${id}`);
-      const data = await response.json();
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setItem(data.item);
-        setSimilarImages(data.similarImages);
-        setSimilarCaptions(data.similarCaptions);
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(`/api/items/${id}`);
+        const data = await response.json();
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setItem(data.item);
+          setSimilarImages(data.similarImages);
+          setSimilarCaptions(data.similarCaptions);
+        }
+        setIsLoading(false);
+      } catch (err) {
+        setError(`Failed to fetch item with id: ${id}. Please try again.`);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
+
     getItem(id);
-  }, [id, searchParams]);
+  }, [id]);
 
   return (
     <div>
@@ -73,8 +83,8 @@ const Page = () => {
                   />
                 </CardContent>
                 <CardContent className="flex items-center justify-center">
-                  <Map
-                    center={item.location.geojson.properties.centroid}
+                  <PompeiiMap
+                    centroid={item.location.geojson.properties.centroid}
                     zoom={
                       item.location.geojson.properties.scope === "room" ||
                       item.location.geojson.properties.scope === "property"
@@ -101,7 +111,7 @@ const Page = () => {
                         style={{ color: "blue", fillOpacity: 0.1 }}
                       />
                     )}
-                  </Map>
+                  </PompeiiMap>
                 </CardContent>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

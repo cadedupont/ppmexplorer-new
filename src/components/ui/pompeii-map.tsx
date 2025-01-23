@@ -19,17 +19,17 @@ const TileLayer = dynamic(
 
 import "leaflet/dist/leaflet.css";
 
-const Map = ({
+const PompeiiMap = ({
   children,
-  center,
+  centroid,
   zoom,
   width,
   height,
 }: {
   children?: ReactNode;
-  center: {
+  centroid: {
     lat: number;
-    lng: number;
+    lon: number;
   };
   zoom: number;
   width: string;
@@ -39,7 +39,7 @@ const Map = ({
 
   return (
     <MapContainer
-      center={center}
+      center={centroid}
       minZoom={13}
       maxZoom={19}
       zoom={zoom}
@@ -65,4 +65,4 @@ const Map = ({
   );
 };
 
-export default Map;
+export default PompeiiMap;

@@ -1,13 +1,19 @@
+"use client";
+
 import Image from "next/image";
 
-const Page = async () => {
+const Page = () => {
   return (
-    <div>
-      <Image src="/logo.png" alt="PPMExplorer Logo" width={100} height={100} />
-      <p>
-        Welcome to PPMExplorer, a new way to explore the artwork of ancient
-        Pompeii.
-      </p>
+    <div className="flex flex-col items-center justify-center">
+      <Image
+        src="/logo.png"
+        alt="PPMExplorer Logo"
+        width={200}
+        height={200}
+        className="mb-8"
+      />
+      Welcome to PPMExplorer, a new way to explore the artwork of ancient
+      Pompeii!
     </div>
   );
 };

@@ -30,7 +30,7 @@ const Lightbox = ({
       />
       {isExpanded && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50"
           onClick={toggleLightbox}
         >
           <div className="relative flex flex-col items-center max-w-2xl max-h-screen text-center">
