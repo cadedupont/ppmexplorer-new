@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Breadcrumb,
@@ -8,13 +8,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 const BreadcrumbTrail = ({
   currentItem,
@@ -23,14 +23,12 @@ const BreadcrumbTrail = ({
   currentItem: string;
   searchParams: URLSearchParams;
 }) => {
-  const query = searchParams.get("query");
-  const previousItems = searchParams.get("previous")?.split(",") || [];
+  const query = searchParams.get('query');
+  const previousItems = searchParams.get('previous')?.split(',') || [];
 
   const formatItem = (item: string) => {
-    const [_, volume, __, page, ___, image] = item.split("_");
-    return `Volume ${Number(volume)}, Page ${Number(page)} (Image ${Number(
-      image
-    )})`;
+    const [, volume, , page, , image] = item.split('_');
+    return `Volume ${Number(volume)}, Page ${Number(page)} (Image ${Number(image)})`;
   };
 
   return (
@@ -42,31 +40,27 @@ const BreadcrumbTrail = ({
               <>
                 <BreadcrumbLink
                   href={`/items?${(() => {
-                    const newParams = new URLSearchParams(
-                      searchParams.toString()
-                    );
-                    newParams.delete("previous");
+                    const newParams = new URLSearchParams(searchParams.toString());
+                    newParams.delete('previous');
                     return newParams.toString();
                   })()}`}
                 >
-                  Search "{query}"
+                  Search &quot;{query}&quot;
                 </BreadcrumbLink>
               </>
             ) : (
               <>
                 <BreadcrumbLink
                   href={`/items?${(() => {
-                    const newParams = new URLSearchParams(
-                      searchParams.toString()
-                    );
-                    newParams.delete("previous");
+                    const newParams = new URLSearchParams(searchParams.toString());
+                    newParams.delete('previous');
                     return newParams.toString();
                   })()}`}
                 >
-                  {searchParams.has("view")
-                    ? (searchParams.get("view")?.charAt(0).toUpperCase() ||
-                        "") + (searchParams.get("view")?.slice(1) || "")
-                    : "Explore"}
+                  {searchParams.has('view')
+                    ? (searchParams.get('view')?.charAt(0).toUpperCase() || '') +
+                      (searchParams.get('view')?.slice(1) || '')
+                    : 'Explore'}
                 </BreadcrumbLink>
               </>
             )}
@@ -85,23 +79,20 @@ const BreadcrumbTrail = ({
                       .slice(0, -1)
                       .reverse()
                       .map((item, reverseIndex) => {
-                        const originalIndex =
-                          previousItems.length - 2 - reverseIndex;
-                        const newParams = new URLSearchParams(
-                          searchParams.toString()
-                        );
-                        originalIndex > 0
-                          ? newParams.set(
-                              "previous",
-                              previousItems.slice(0, originalIndex).join(",")
-                            )
-                          : newParams.delete("previous");
+                        const originalIndex = previousItems.length - 2 - reverseIndex;
+                        const newParams = new URLSearchParams(searchParams.toString());
+                        if (originalIndex > 0) {
+                          newParams.set(
+                            'previous',
+                            previousItems.slice(0, originalIndex).join(','),
+                          );
+                        } else {
+                          newParams.delete('previous');
+                        }
 
                         return (
                           <DropdownMenuItem key={reverseIndex}>
-                            <BreadcrumbLink
-                              href={`/items/${item}?${newParams.toString()}`}
-                            >
+                            <BreadcrumbLink href={`/items/${item}?${newParams.toString()}`}>
                               {formatItem(item)}
                             </BreadcrumbLink>
                           </DropdownMenuItem>
@@ -117,16 +108,14 @@ const BreadcrumbTrail = ({
             <>
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href={`/items/${
-                    previousItems[previousItems.length - 1]
-                  }?${(() => {
-                    const newParams = new URLSearchParams(
-                      searchParams.toString()
-                    );
-                    const previous = previousItems.slice(0, -1).join(",");
-                    previous
-                      ? newParams.set("previous", previous)
-                      : newParams.delete("previous");
+                  href={`/items/${previousItems[previousItems.length - 1]}?${(() => {
+                    const newParams = new URLSearchParams(searchParams.toString());
+                    const previous = previousItems.slice(0, -1).join(',');
+                    if (previous) {
+                      newParams.set('previous', previous);
+                    } else {
+                      newParams.delete('previous');
+                    }
                     return newParams.toString();
                   })()}`}
                 >
@@ -137,9 +126,7 @@ const BreadcrumbTrail = ({
             </>
           )}
           <BreadcrumbItem>
-            <BreadcrumbPage>
-              {currentItem ? formatItem(currentItem) : "Current"}
-            </BreadcrumbPage>
+            <BreadcrumbPage>{currentItem ? formatItem(currentItem) : 'Current'}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

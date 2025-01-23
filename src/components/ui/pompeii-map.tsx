@@ -1,24 +1,18 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
-import { useTheme } from "next-themes";
-import dynamic from "next/dynamic";
-import { useMapEvents } from "react-leaflet";
+import { ReactNode } from 'react';
+import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
+import { useMapEvents } from 'react-leaflet';
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((module) => module.MapContainer),
-  {
-    ssr: false,
-  }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((module) => module.TileLayer),
-  {
-    ssr: false,
-  }
-);
+const MapContainer = dynamic(() => import('react-leaflet').then((module) => module.MapContainer), {
+  ssr: false,
+});
+const TileLayer = dynamic(() => import('react-leaflet').then((module) => module.TileLayer), {
+  ssr: false,
+});
 
-import "leaflet/dist/leaflet.css";
+import 'leaflet/dist/leaflet.css';
 
 const ClickLogger = () => {
   useMapEvents({
@@ -61,19 +55,15 @@ const PompeiiMap = ({
     >
       <TileLayer
         url={
-          theme === "dark"
-            ? "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png"
-            : "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+          theme === 'dark'
+            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'
         }
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         maxNativeZoom={19}
         maxZoom={22}
       />
-      <TileLayer
-        url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png"
-        maxNativeZoom={19}
-        maxZoom={22}
-      />
+      <TileLayer url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png" maxNativeZoom={19} maxZoom={22} />
       <ClickLogger />
       {children}
     </MapContainer>

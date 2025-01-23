@@ -1,4 +1,4 @@
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient } from '@azure/cosmos';
 
 const endpoint = String(process.env.COSMOS_ENDPOINT);
 const key = String(process.env.COSMOS_KEY);

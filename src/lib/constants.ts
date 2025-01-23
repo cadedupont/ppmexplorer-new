@@ -6,19 +6,19 @@ export const TOTAL_PPM_ITEM_COUNT = 17319;
 export const regios: GeoJSON.Feature[] = [
   {
     // won't be used since there's no regio 0
-    type: "Feature",
-    properties: { name: "" },
+    type: 'Feature',
+    properties: { name: '' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [],
     },
-    id: "",
+    id: '',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 1" },
+    type: 'Feature',
+    properties: { name: 'Regio 1' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.493530091464807, 40.749372326701, 0.0],
@@ -61,13 +61,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r1",
+    id: 'urn:p-lod:id:r1',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 2" },
+    type: 'Feature',
+    properties: { name: 'Regio 2' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.493530091464807, 40.749372326701, 0.0],
@@ -113,13 +113,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r2",
+    id: 'urn:p-lod:id:r2',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 3" },
+    type: 'Feature',
+    properties: { name: 'Regio 3' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.490619621410401, 40.7510583182982, 0.0],
@@ -150,13 +150,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r3",
+    id: 'urn:p-lod:id:r3',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 4" },
+    type: 'Feature',
+    properties: { name: 'Regio 4' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.48874025235722, 40.75275761262763, 0.0],
@@ -182,13 +182,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r4",
+    id: 'urn:p-lod:id:r4',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 5" },
+    type: 'Feature',
+    properties: { name: 'Regio 5' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.487772027314259, 40.754078908697096, 0.0],
@@ -215,13 +215,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r5",
+    id: 'urn:p-lod:id:r5',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 6" },
+    type: 'Feature',
+    properties: { name: 'Regio 6' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.486172760988383, 40.751585008839164, 0.0],
@@ -310,13 +310,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r6",
+    id: 'urn:p-lod:id:r6',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 7" },
+    type: 'Feature',
+    properties: { name: 'Regio 7' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.488116522078618, 40.74988825908488, 0.0],
@@ -470,13 +470,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r7",
+    id: 'urn:p-lod:id:r7',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 8" },
+    type: 'Feature',
+    properties: { name: 'Regio 8' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.483064439248821, 40.7484372486149, 0.0],
@@ -679,13 +679,13 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r8",
+    id: 'urn:p-lod:id:r8',
   },
   {
-    type: "Feature",
-    properties: { name: "Regio 9" },
+    type: 'Feature',
+    properties: { name: 'Regio 9' },
     geometry: {
-      type: "Polygon",
+      type: 'Polygon',
       coordinates: [
         [
           [14.490619621410401, 40.7510583182982, 0.0],
@@ -703,6 +703,6 @@ export const regios: GeoJSON.Feature[] = [
         ],
       ],
     },
-    id: "urn:p-lod:id:r9",
+    id: 'urn:p-lod:id:r9',
   },
 ];
