@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 
-const MarkerClusterGroup = dynamic(
-  () => import('react-leaflet-markercluster').then((module) => module.default),
-  { ssr: false },
-);
+// const MarkerClusterGroup = dynamic(
+//   () => import('react-leaflet-markercluster').then((module) => module.default),
+//   { ssr: false },
+// );
 const GeoJSON = dynamic(() => import('react-leaflet').then((module) => module.GeoJSON), {
   ssr: false,
 });
@@ -77,12 +77,7 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
   return (
     <div className="flex h-screen">
       <div className="w-3/4">
-        <PompeiiMap
-          centroid={{ lat: 40.75103, lon: 14.4884 }}
-          zoom={16}
-          width={'100%'}
-          height={'100vh'}
-        >
+        <PompeiiMap centroid={[40.75103, 14.4884]} zoom={16} width={'100%'} height={'100vh'}>
           <GeoJSON
             key={JSON.stringify(featureCollection)}
             data={featureCollection}
@@ -91,10 +86,14 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
               fillOpacity: 0.1,
             })}
           />
-          <MarkerClusterGroup animate={true} zoomToBoundsOnClick={true} showCoverageOnHover={false}>
+          {/* <MarkerClusterGroup animate={true} zoomToBoundsOnClick={true} showCoverageOnHover={false}> */}
+          <div>
             {items.map((item: PPMItem) => (
               <Marker
-                position={item.location.geojson.properties.centroid}
+                position={[
+                  item.location.geojson.properties.centroid.lat,
+                  item.location.geojson.properties.centroid.lon,
+                ]}
                 key={item.id}
                 icon={icon || undefined}
                 eventHandlers={{
@@ -118,7 +117,8 @@ const CollectionMap = ({ items }: { items: PPMItem[] }) => {
                 <Popup>{item.location.geojson.properties.name}</Popup>
               </Marker>
             ))}
-          </MarkerClusterGroup>
+          </div>
+          {/* </MarkerClusterGroup> */}
         </PompeiiMap>
       </div>
       <div className="w-1/4 overflow-y-auto">

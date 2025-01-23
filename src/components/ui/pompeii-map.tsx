@@ -31,10 +31,7 @@ const PompeiiMap = ({
   height,
 }: {
   children?: ReactNode;
-  centroid: {
-    lat: number;
-    lon: number;
-  };
+  centroid: [number, number];
   zoom: number;
   width: string;
   height: string;

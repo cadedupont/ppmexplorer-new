@@ -65,7 +65,10 @@ const Page = () => {
           </CardContent>
           <CardContent className="flex items-center justify-center">
             <PompeiiMap
-              centroid={data.item.location.geojson.properties.centroid}
+              centroid={[
+                data.item.location.geojson.properties.centroid.lat,
+                data.item.location.geojson.properties.centroid.lon,
+              ]}
               zoom={
                 data.item.location.geojson.properties.scope === 'room' ||
                 data.item.location.geojson.properties.scope === 'property'
