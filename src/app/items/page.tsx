@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 
 import { Table, Grid2x2, Map, X } from 'lucide-react';
 
@@ -31,8 +32,8 @@ import { Badge } from '@/components/ui/badge';
 import PolaroidGrid from '@/components/ui/polaroid-grid';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import DataTable from './data-table';
-import CollectionMap from './collection-map';
 import useColumns from './columns';
+const CollectionMap = dynamic(() => import('./collection-map'), { ssr: false });
 
 import type { PPMItem } from '@/lib/types';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -42,14 +43,6 @@ const Page = () => {
   const searchParams = useSearchParams();
   const isMobile = useIsMobile();
 
-  const [view, setView] = useState<string>(searchParams.get('view') || 'table');
-  useEffect(() => {
-    if (isMobile) {
-      setView('grid');
-      updateSearchParams({ view: 'grid' });
-    }
-  }, [isMobile]);
-
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('query') || '');
   const [limit, setLimit] = useState<number>(Number(searchParams.get('limit')) || 10);
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
@@ -57,28 +50,28 @@ const Page = () => {
   const location = searchParams.get('location');
   const query = searchParams.get('query');
 
-  const updateSearchParams = (updates: Record<string, string | null>) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null) {
-        newParams.delete(key);
-      } else {
-        newParams.set(key, value);
-      }
-    });
-    router.replace(`/items?${newParams.toString()}`);
-  };
+  const updateSearchParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null) {
+          newParams.delete(key);
+        } else {
+          newParams.set(key, value);
+        }
+      });
+      router.replace(`/items?${newParams.toString()}`);
+    },
+    [router, searchParams],
+  );
 
-  const parsedLocation = useMemo(() => {
-    if (!location) return {};
-    const parts = location.split(':')[3]?.split('-') || [];
-    return {
-      regio: parts[0] ? `Regio: ${parts[0].slice(1)}` : '',
-      insula: parts[1] ? `Insula: ${parts[1].slice(1)}` : '',
-      property: parts[2] ? `Property: ${parts[2].slice(1)}` : '',
-      room: parts[4] ? `Room: ${parts[4]}` : '',
-    };
-  }, [location]);
+  const [view, setView] = useState<string>(searchParams.get('view') || 'table');
+  useEffect(() => {
+    if (isMobile) {
+      setView('grid');
+      updateSearchParams({ view: 'grid' });
+    }
+  }, [isMobile, updateSearchParams]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['items', { offset, limit, location, query }],
@@ -100,6 +93,17 @@ const Page = () => {
     data?.items.some((item: PPMItem) => item.similarityScore),
     searchParams.toString(),
   );
+
+  const parsedLocation = useMemo(() => {
+    if (!location) return {};
+    const parts = location.split(':')[3]?.split('-') || [];
+    return {
+      regio: parts[0] ? `Regio: ${parts[0].slice(1)}` : '',
+      insula: parts[1] ? `Insula: ${parts[1].slice(1)}` : '',
+      property: parts[2] ? `Property: ${parts[2].slice(1)}` : '',
+      room: parts[4] ? `Room: ${parts[4]}` : '',
+    };
+  }, [location]);
 
   if (error) {
     return (
