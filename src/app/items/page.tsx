@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
@@ -35,14 +35,22 @@ import CollectionMap from './collection-map';
 import useColumns from './columns';
 
 import type { PPMItem } from '@/lib/types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isMobile = useIsMobile();
 
   const [view, setView] = useState<string>(searchParams.get('view') || 'table');
+  useEffect(() => {
+    if (isMobile) {
+      setView('grid');
+      updateSearchParams({ view: 'grid' });
+    }
+  }, [isMobile]);
+
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('query') || '');
-  const [vectorType, setVectorType] = useState<string>(searchParams.get('vector') || 'caption');
   const [limit, setLimit] = useState<number>(Number(searchParams.get('limit')) || 10);
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
   const offset = useMemo(() => (page - 1) * limit, [page, limit]);
@@ -73,11 +81,11 @@ const Page = () => {
   }, [location]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['items', { offset, limit, location, query, vectorType: query ? vectorType : null }],
+    queryKey: ['items', { offset, limit, location, query }],
     queryFn: async () => {
       let url = `${query ? `api/search` : `/api/items`}?offset=${offset}&limit=${limit}`;
       if (location) url += `&location=${location}`;
-      if (query) url += `&query=${query}&vector=${vectorType}`;
+      if (query) url += `&query=${query}&vector=caption`;
       const response = await fetch(url);
       const data = await response.json();
       if (data.error) {
@@ -95,10 +103,8 @@ const Page = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-red-500">
-          {error?.message || 'An error occurred. Please try again later.'}
-        </p>
+      <div className="flex min-h-[50vh] items-center justify-center text-red-500">
+        {error?.message || 'An error occurred. Please try again later.'}
       </div>
     );
   }
@@ -112,21 +118,25 @@ const Page = () => {
           updateSearchParams({ view: value, page: String(page) });
         }}
       >
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="table">
-              <Table className="mr-2 h-4 w-4" />
-              Table
-            </TabsTrigger>
-            <TabsTrigger value="grid">
-              <Grid2x2 className="mr-2 h-4 w-4" />
-              Grid
-            </TabsTrigger>
-            <TabsTrigger value="map">
-              <Map className="mr-2 h-4 w-4" />
-              Map
-            </TabsTrigger>
-          </TabsList>
+        <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {!isMobile && (
+            <div>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="table">
+                  <Table className="mr-2 h-4 w-4" />
+                  Table
+                </TabsTrigger>
+                <TabsTrigger value="grid">
+                  <Grid2x2 className="mr-2 h-4 w-4" />
+                  Grid
+                </TabsTrigger>
+                <TabsTrigger value="map">
+                  <Map className="mr-2 h-4 w-4" />
+                  Map
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          )}
           <div className="flex items-center gap-4">
             <Input
               type="text"
@@ -161,37 +171,12 @@ const Page = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Items Per Page</SelectLabel>
+                  <SelectLabel>Results to Show</SelectLabel>
                   {['5', '10', '20', '50', '100', '200', '500'].map((num: string) => (
                     <SelectItem key={num} value={num}>
                       {num}
                     </SelectItem>
                   ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select
-              value={String(vectorType)}
-              onValueChange={(value: string) => {
-                setVectorType(value);
-                updateSearchParams({
-                  vector: value,
-                  page: query ? '1' : String(page),
-                });
-              }}
-            >
-              <SelectTrigger className="w-24">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Vector Search Type</SelectLabel>
-                  <SelectItem key={'caption'} value="caption">
-                    Caption
-                  </SelectItem>
-                  <SelectItem key={'image'} value="image">
-                    Image
-                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

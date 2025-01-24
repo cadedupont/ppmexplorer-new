@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BreadcrumbTrail = ({
   currentItem,
@@ -25,6 +26,7 @@ const BreadcrumbTrail = ({
 }) => {
   const query = searchParams.get('query');
   const previousItems = searchParams.get('previous')?.split(',') || [];
+  const isMobile = useIsMobile();
 
   const formatItem = (item: string) => {
     const [, volume, , page, , image] = item.split('_');
@@ -33,40 +35,9 @@ const BreadcrumbTrail = ({
 
   return (
     <div>
-      <Breadcrumb className="mb-8">
+      <Breadcrumb className="mb-8 mt-8 md:mt-0">
         <BreadcrumbList>
-          <BreadcrumbItem>
-            {query ? (
-              <>
-                <BreadcrumbLink
-                  href={`/items?${(() => {
-                    const newParams = new URLSearchParams(searchParams.toString());
-                    newParams.delete('previous');
-                    return newParams.toString();
-                  })()}`}
-                >
-                  Search &quot;{query}&quot;
-                </BreadcrumbLink>
-              </>
-            ) : (
-              <>
-                <BreadcrumbLink
-                  href={`/items?${(() => {
-                    const newParams = new URLSearchParams(searchParams.toString());
-                    newParams.delete('previous');
-                    return newParams.toString();
-                  })()}`}
-                >
-                  {searchParams.has('view')
-                    ? (searchParams.get('view')?.charAt(0).toUpperCase() || '') +
-                      (searchParams.get('view')?.slice(1) || '')
-                    : 'Explore'}
-                </BreadcrumbLink>
-              </>
-            )}
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          {previousItems.length >= 2 && (
+          {isMobile ? (
             <>
               <BreadcrumbItem>
                 <DropdownMenu>
@@ -75,36 +46,100 @@ const BreadcrumbTrail = ({
                     <span className="sr-only">Toggle menu</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
-                    {previousItems
-                      .slice(0, -1)
-                      .reverse()
-                      .map((item, reverseIndex) => {
-                        const originalIndex = previousItems.length - 2 - reverseIndex;
-                        const newParams = new URLSearchParams(searchParams.toString());
-                        if (originalIndex > 0) {
-                          newParams.set(
-                            'previous',
-                            previousItems.slice(0, originalIndex).join(','),
-                          );
-                        } else {
+                    {previousItems.reverse().map((item, index) => {
+                      const newParams = new URLSearchParams(searchParams.toString());
+                      newParams.set('previous', previousItems.slice(0, index).reverse().join(','));
+                      return (
+                        <DropdownMenuItem key={index}>
+                          <BreadcrumbLink href={`/items/${item}?${newParams.toString()}`}>
+                            {formatItem(item)}
+                          </BreadcrumbLink>
+                        </DropdownMenuItem>
+                      );
+                    })}
+                    <DropdownMenuItem>
+                      <BreadcrumbLink
+                        href={`/items?${(() => {
+                          const newParams = new URLSearchParams(searchParams.toString());
                           newParams.delete('previous');
-                        }
-
-                        return (
-                          <DropdownMenuItem key={reverseIndex}>
-                            <BreadcrumbLink href={`/items/${item}?${newParams.toString()}`}>
-                              {formatItem(item)}
-                            </BreadcrumbLink>
-                          </DropdownMenuItem>
-                        );
-                      })}
+                          return newParams.toString();
+                        })()}`}
+                      >
+                        {query
+                          ? `Search "${query}"`
+                          : searchParams.has('view')
+                            ? (searchParams.get('view')?.charAt(0).toUpperCase() || '') +
+                              (searchParams.get('view')?.slice(1) || '')
+                            : 'Explore'}
+                      </BreadcrumbLink>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
             </>
+          ) : (
+            <>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  href={`/items?${(() => {
+                    const newParams = new URLSearchParams(searchParams.toString());
+                    newParams.delete('previous');
+                    return newParams.toString();
+                  })()}`}
+                >
+                  {query
+                    ? `Search "${query}"`
+                    : searchParams.has('view')
+                      ? (searchParams.get('view')?.charAt(0).toUpperCase() || '') +
+                        (searchParams.get('view')?.slice(1) || '')
+                      : 'Explore'}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+            </>
           )}
-          {previousItems.length >= 1 && (
+          {isMobile
+            ? null
+            : previousItems.length >= 2 && (
+                <>
+                  <BreadcrumbItem>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="flex items-center gap-1">
+                        <BreadcrumbEllipsis className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        {previousItems
+                          .slice(0, -1)
+                          .reverse()
+                          .map((item, reverseIndex) => {
+                            const originalIndex = previousItems.length - 2 - reverseIndex;
+                            const newParams = new URLSearchParams(searchParams.toString());
+                            if (originalIndex > 0) {
+                              newParams.set(
+                                'previous',
+                                previousItems.slice(0, originalIndex).join(','),
+                              );
+                            } else {
+                              newParams.delete('previous');
+                            }
+
+                            return (
+                              <DropdownMenuItem key={reverseIndex}>
+                                <BreadcrumbLink href={`/items/${item}?${newParams.toString()}`}>
+                                  {formatItem(item)}
+                                </BreadcrumbLink>
+                              </DropdownMenuItem>
+                            );
+                          })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                </>
+              )}
+          {!isMobile && previousItems.length >= 1 && (
             <>
               <BreadcrumbItem>
                 <BreadcrumbLink

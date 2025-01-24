@@ -35,7 +35,7 @@ const RootLayout = async ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en" className={`${copse.variable} ${figtree.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${copse.variable} ${figtree.variable}`}>
       <body>
         <ReactQueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

@@ -2,8 +2,8 @@
 
 import { ReactNode } from 'react';
 import { useTheme } from 'next-themes';
-import dynamic from 'next/dynamic';
 import { useMapEvents } from 'react-leaflet';
+import dynamic from 'next/dynamic';
 
 const MapContainer = dynamic(() => import('react-leaflet').then((module) => module.MapContainer), {
   ssr: false,

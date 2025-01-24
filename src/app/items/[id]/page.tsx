@@ -2,10 +2,12 @@
 
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
+
 import { Captions, BookOpenText, MapPin } from 'lucide-react';
-import { GeoJSON } from 'react-leaflet';
+
+const GeoJSON = dynamic(() => import('react-leaflet').then((mod) => mod.GeoJSON), { ssr: false });
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PompeiiMap from '@/components/ui/pompeii-map';
@@ -35,7 +37,11 @@ const Page = () => {
   });
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {
@@ -69,12 +75,7 @@ const Page = () => {
                 data.item.location.geojson.properties.centroid.lat,
                 data.item.location.geojson.properties.centroid.lon,
               ]}
-              zoom={
-                data.item.location.geojson.properties.scope === 'room' ||
-                data.item.location.geojson.properties.scope === 'property'
-                  ? 20
-                  : 17
-              }
+              zoom={18}
               width={'100%'}
               height={'50vh'}
             >
