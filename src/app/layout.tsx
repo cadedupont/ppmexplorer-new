@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Copse, Figtree } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import NavBar from '@/components/ui/navbar';
@@ -40,7 +41,10 @@ const RootLayout = async ({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <NavBar />
             <main className="mx-auto flex max-w-screen-2xl items-center justify-center px-4 md:flex md:px-8">
-              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+              <Suspense fallback={<div>Loading...</div>}>
+                {children}
+                <SpeedInsights />
+              </Suspense>
             </main>
           </ThemeProvider>
         </ReactQueryProvider>
