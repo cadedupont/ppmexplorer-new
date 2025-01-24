@@ -6,7 +6,7 @@ import NavBar from '@/components/ui/navbar';
 import ReactQueryProvider from '@/components/react-query-provider';
 
 import './globals.css';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 const copse = Copse({
   weight: '400',
@@ -40,7 +40,7 @@ const RootLayout = async ({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <NavBar />
             <main className="mx-auto flex max-w-screen-2xl items-center justify-center px-4 md:flex md:px-8">
-              {children}
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
             </main>
           </ThemeProvider>
         </ReactQueryProvider>
