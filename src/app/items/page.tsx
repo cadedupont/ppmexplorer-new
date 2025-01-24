@@ -44,7 +44,7 @@ const Page = () => {
   const isMobile = useIsMobile();
 
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('query') || '');
-  const [limit, setLimit] = useState<number>(Number(searchParams.get('limit')) || 10);
+  const [limit, setLimit] = useState<number>(Number(searchParams.get('limit')) || 50);
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
   const offset = useMemo(() => (page - 1) * limit, [page, limit]);
   const location = searchParams.get('location');
@@ -65,7 +65,7 @@ const Page = () => {
     [router, searchParams],
   );
 
-  const [view, setView] = useState<string>(searchParams.get('view') || 'table');
+  const [view, setView] = useState<string>(searchParams.get('view') || 'map');
   useEffect(() => {
     if (isMobile) {
       setView('grid');
@@ -126,6 +126,10 @@ const Page = () => {
           {!isMobile && (
             <div>
               <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="map">
+                  <Map className="mr-2 h-4 w-4" />
+                  Map
+                </TabsTrigger>
                 <TabsTrigger value="table">
                   <Table className="mr-2 h-4 w-4" />
                   Table
@@ -133,10 +137,6 @@ const Page = () => {
                 <TabsTrigger value="grid">
                   <Grid2x2 className="mr-2 h-4 w-4" />
                   Grid
-                </TabsTrigger>
-                <TabsTrigger value="map">
-                  <Map className="mr-2 h-4 w-4" />
-                  Map
                 </TabsTrigger>
               </TabsList>
             </div>

@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import { useTheme } from 'next-themes';
-import { useMapEvents } from 'react-leaflet';
 import dynamic from 'next/dynamic';
 
 const MapContainer = dynamic(() => import('react-leaflet').then((module) => module.MapContainer), {
@@ -13,15 +12,6 @@ const TileLayer = dynamic(() => import('react-leaflet').then((module) => module.
 });
 
 import 'leaflet/dist/leaflet.css';
-
-const ClickLogger = () => {
-  useMapEvents({
-    click(e) {
-      console.log(e.latlng);
-    },
-  });
-  return null;
-};
 
 const PompeiiMap = ({
   children,
@@ -61,7 +51,6 @@ const PompeiiMap = ({
         maxZoom={22}
       />
       <TileLayer url="https://palp.art/xyz-tiles/{z}/{x}/{y}.png" maxNativeZoom={19} maxZoom={22} />
-      <ClickLogger />
       {children}
     </MapContainer>
   );
