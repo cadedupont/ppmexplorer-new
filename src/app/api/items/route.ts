@@ -10,9 +10,9 @@ export const GET = async (req: NextRequest) => {
 
   try {
     let itemQuery = `SELECT c.id, c.imageURL, c.caption_it, c.caption_en, c.volume, c.page, c.imageIndex, c.location, c.imageVector, c.captionVector FROM c`;
-    const itemParameters: { name: string; value: string }[] = [
-      { name: '@offset', value: String(offset) },
-      { name: '@limit', value: String(limit) },
+    const itemParameters: { name: string; value: number | string }[] = [
+      { name: '@offset', value: offset },
+      { name: '@limit', value: limit },
     ];
     if (location) {
       itemQuery += ` WHERE CONTAINS(c.location.geojson.id, @location)`;

@@ -10,7 +10,7 @@ const Page = () => {
     router.push('/items');
   }, [router]);
 
-  return <main>Redirecting to /items...</main>;
+  return null;
 };
 
 export default Page;

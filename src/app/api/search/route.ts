@@ -76,10 +76,10 @@ export const GET = async (req: NextRequest) => {
     let itemQuery = `SELECT c.id, c.imageURL, c.caption_it, c.caption_en, c.volume, c.page, c.imageIndex, c.location, c.imageVector, c.captionVector, VectorDistance(${
       isCaption ? `c.captionVector` : `c.imageVector`
     }, @vector) AS similarityScore FROM c`;
-    const itemParameters: { name: string; value: string | number[] }[] = [
+    const itemParameters: { name: string; value: string | number | number[] }[] = [
       { name: '@vector', value: embedding },
-      { name: '@offset', value: String(offset) },
-      { name: '@limit', value: String(limit) },
+      { name: '@offset', value: offset },
+      { name: '@limit', value: limit },
     ];
     if (location) {
       itemQuery += ` WHERE CONTAINS(c.location.geojson.id, @location)`;
