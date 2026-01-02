@@ -45,6 +45,7 @@ const Page = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('query') || '');
   const [limit, setLimit] = useState<number>(Number(searchParams.get('limit')) || 50);
+  const [searchType, setSearchType] = useState<string>(searchParams.get("type") || "caption");
   const page = useMemo(() => Number(searchParams.get('page')) || 1, [searchParams]);
   const offset = useMemo(() => (page - 1) * limit, [page, limit]);
   const location = searchParams.get('location');
@@ -74,11 +75,11 @@ const Page = () => {
   }, [isMobile, updateSearchParams]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['items', { offset, limit, location, query }],
+    queryKey: ['items', { offset, limit, location, query, searchType }],
     queryFn: async () => {
-      let url = `${query ? `api/search` : `/api/items`}?offset=${offset}&limit=${limit}`;
+      let url = `${query ? `/api/search` : `/api/items`}?offset=${offset}&limit=${limit}`;
       if (location) url += `&location=${location}`;
-      if (query) url += `&query=${query}&vector=caption`;
+      if (query) url += `&query=${query}&vector=${searchType}`;
       const response = await fetch(url);
       const data = await response.json();
       if (data.error) {
@@ -184,12 +185,35 @@ const Page = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <Select
+              value={searchType}
+              onValueChange={(value: string) => {
+                setSearchType(value);
+                updateSearchParams({
+                  type: value,
+                });
+              }}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Vector Search Type</SelectLabel>
+                  {['Caption', 'Image'].map((type: string) => (
+                    <SelectItem key={type} value={type.toLowerCase()}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="mb-4 flex gap-2">
           {searchParams.has('query') && (
             <Badge variant="secondary">
-              Search: {searchQuery}
+              Search: {query}
               <Button
                 variant="link"
                 size="sm"
